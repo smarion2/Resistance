@@ -1,0 +1,24 @@
+{
+  "name": "resistance",
+  "version": "1.0.0",
+  "description": "based on the fun game resistance this is to make playing it a bit easier",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smarion2/resistance.git"
+  },
+  "keywords": [
+    "spy",
+    "game",
+    "resistance"
+  ],
+  "author": "Sam Marion",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/smarion2/resistance/issues"
+  },
+  "homepage": "https://github.com/smarion2/resistance#readme"
+}

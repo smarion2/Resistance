@@ -1,0 +1,55 @@
+home screen:
+    start new Game
+    join new Game
+
+start new game screen:
+    show ip address to connect to with a generated game key
+    settings for game and list of players current joined w/ their given player name.
+    button to start the game once everyone has joined
+
+    once game starts:
+        show the resistance board depending how many players joined.
+        keep track of pass or failed missions and vote counter
+        show list of players and what missions they went on with a pass or fail next to each.
+
+join game screen:
+    spot to put in game key
+    spot to enter your name
+
+    once game starts:
+        depending on the game phase this scree will show your character role,
+        your vote to approve or reject mission
+        your mission card if you are selected to go on the mission.
+
+Game phases:
+    start:
+        server gives out character roles
+        client has button to hide or show character role
+
+    loop:
+        server assignes a leader
+        leader picks who goes on mission
+        server shows who the leader picks and awaits votes from all players
+        once all players vote the votes are revleaed, show who pass and failed next to each name
+        if mission fails server increments leader and loops
+        if mission passes sever awaits mission card selection from only the selected players
+        once all missions cards are submited they are flipped
+        server displays a pass or failed mission and updates the ui
+        check if either team has won yet if not loop if they have ask to start new game w/ same settings or return to main menu.
+
+
+sessionModel = [
+    // session id key
+    1234: {
+        server: {
+            connection: wsConnection,
+
+        },
+        players: [{
+            Id: 1,
+            Name: "",
+            connection: wsConnection
+        }],
+        gameState: ""
+    }
+]
