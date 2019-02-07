@@ -1,1 +1,1 @@
-<script src="https://gist.github.com/smarion2/e3d5c1951d2b1583ace54e4a542225fb.js"></script>
+https://gist.github.com/smarion2/e3d5c1951d2b1583ace54e4a542225fb
