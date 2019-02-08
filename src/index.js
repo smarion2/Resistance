@@ -11,6 +11,12 @@ app.use(express.static(__dirname));
 
 app.listen(3000);
 
+var server = http.createServer(function (request, response) {
+    console.log((new Date()) + ' Received request for ' + request.url);
+    response.writeHead(404);
+    response.end();
+});
+
 server.listen(webSocketSeverPort, function () {
     console.log(new Date() + " Server is listening on port " + webSocketSeverPort);
 });
@@ -25,9 +31,13 @@ wsServer.on('request', function (request) {
     console.log(new Date() + ' Connection accepted.');
 
     connection.on('message', function (message) {
+        var parsedMessage = JSON.parse(message.utf8Data).messageType;
+        console.log('mesesage recieved ' + parsedMessage);
         if (message.type === 'utf8') {
-            switch (message.messageType) {
-                case 'newGame':
+            switch (parsedMessage) {
+                case 'createGame':
+                    console.log('creating game!');
+                    connection.sendUTF(createGameId());
                     break;
                 case 'joinGame':
                     break;
@@ -39,5 +49,12 @@ wsServer.on('request', function (request) {
                     break;
             }
         }
+        else {
+            console.log(message.type);
+        }
     });
 });
+
+function createGameId() {
+    return 'aaaa';
+}
