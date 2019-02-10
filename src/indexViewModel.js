@@ -1,22 +1,51 @@
 var gameModel = function () {
-    var sessionId = ko.observable();
+    var viewModel = {};
+    viewModel.sessionId = ko.observable("");
+    viewModel.ws;
 
-    //if (ws === null) {
-    var ws = new WebSocket('ws://localhost:1337', 'echo-protocol');
-    //}
+    viewModel.createGame = function () {
+        if (viewModel.ws == null) {
+            viewModel.ws = new WebSocket("ws:localhost:1337", 'echo-protocol');
+            wsListener();
+        }
+        while (viewModel.ws.readyState !== 1) {
+            //         // set time out here?
+        }
+        viewModel.ws.send(JSON.stringify({ messageType: 'createGame' }));
+        //console.log("going to create a game now");
+    };
 
-    ws.onmessage = function (message) {
-        console.log(message.data);
+    viewModel.joinGame = function () {
+        ws.send(JSON.stringify({
+            messageType: 'joinGame',
+            sessionId: 'aaaa',
+            name: 'test'
+        }))
+        //console.log("going to join a game now");
+    };
+
+
+    function wsListener() {
+        viewModel.ws.onmessage = function (message) {
+            console.log(JSON.stringify(message.data));
+            var parsedMessage = JSON.parse(message.data);
+            for (var i in parsedMessage) {
+                console.log(i);
+            }
+            switch (parsedMessage.messageType) {
+                case 'createGame':
+                    console.log(parsedMessage.sessionId);
+                    registerSessionId(parsedMessage.sessionId);
+                    break;
+            }
+        }
     }
-    this.createGame = function () {
-        ws.send(JSON.stringify({ messageType: 'createGame' }));
-        console.log("going to create a game now");
-    };
 
-    this.joinGame = function () {
-        console.log("going to join a game now");
-    };
-
+    function registerSessionId(id) {
+        this.sessionId(id);
+    }
+    return viewModel;
 };
 
-ko.applyBindings(new gameModel());
+var model = gameModel;
+ko.applyBindings(model);
