@@ -39,14 +39,24 @@ wsServer.on('request', function (request) {
                     console.log('creating game!');
                     var sessionId = createGameId();
                     createSession(sessionId, connection);
-                    //connection.sendUTF(JSON.stringify({ blah: 'createGame' }));
                     connection.sendUTF(JSON.stringify({ messageType: 'createGame', sessionId: sessionId }));
                     break;
                 case 'joinGame':
                     var session = sessions[parsedMessage.sessionId];
                     if (session) {
                         session.players.push({ name: parsedMessage.name, connection: connection });
+                        var players = [];
+                        for (var player in session.players) {
+                            players.push(session.players[player].name);
+                        }
                         console.log('Player joined session:' + parsedMessage.sessionId + ' player count: ' + session.players.length);
+                        session.serverConnection.sendUTF(JSON.stringify({ messageType: 'updatePlayerList', players: players }));
+                    }
+                    break;
+                case 'startGame':
+                    var session = sessions[parsedMessage.sessionId];
+                    for (var player in session.players) {
+                        session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'startGame' }));
                     }
                     break;
                 case 'missionSelection':
