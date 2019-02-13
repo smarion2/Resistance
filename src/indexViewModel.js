@@ -24,6 +24,9 @@ if ("WebSocket" in window) {
             case 'updatePlayerList':
                 viewModel.playerList(parsedMessage.players);
                 break;
+            case 'selectMission':
+                viewModel.isSelectingMission(true);
+                break;
         }
     }
 } else {
@@ -33,8 +36,10 @@ if ("WebSocket" in window) {
 var gameModel = function () {
     this.sessionId = ko.observable("");
     this.playersLoading = ko.observable(true);
+    this.isSelectingMission = ko.observable(false);
     this.playerName = ko.observable("");
     this.playerList = ko.observableArray();
+    this.selectedPlayerList = ko.observableArray();
 
     this.createGame = function () {
         ws.send(JSON.stringify({ messageType: 'createGame' }));
@@ -56,6 +61,13 @@ var gameModel = function () {
             sessionId: this.sessionId()
         }));
     };
+
+    this.submitMissionSelection = function () {
+        ws.send(JSON.stringify({
+            messageType: 'missionSelection',
+            selectedPlayers: this.selectedPLayerList()
+        }));
+    }
 };
 
 viewModel = new gameModel();

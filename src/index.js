@@ -6,7 +6,7 @@ var webSocketSeverPort = 1337;
 var app = express();
 
 var sessions = [];
-
+var leaderToken = 0;
 app.use(express.static(__dirname));
 
 app.listen(3000);
@@ -34,6 +34,7 @@ wsServer.on('request', function (request) {
         var parsedMessage = JSON.parse(message.utf8Data);
         console.log('mesesage recieved ' + JSON.stringify(parsedMessage));
         if (message.type === 'utf8') {
+            var session = sessions[parsedMessage.sessionId];
             switch (parsedMessage.messageType) {
                 case 'createGame':
                     console.log('creating game!');
@@ -42,22 +43,20 @@ wsServer.on('request', function (request) {
                     connection.sendUTF(JSON.stringify({ messageType: 'createGame', sessionId: sessionId }));
                     break;
                 case 'joinGame':
-                    var session = sessions[parsedMessage.sessionId];
                     if (session) {
                         session.players.push({ name: parsedMessage.name, connection: connection });
-                        var players = [];
-                        for (var player in session.players) {
-                            players.push(session.players[player].name);
-                        }
+                        var players = getPlayerNames(session.players);
                         console.log('Player joined session:' + parsedMessage.sessionId + ' player count: ' + session.players.length);
                         session.serverConnection.sendUTF(JSON.stringify({ messageType: 'updatePlayerList', players: players }));
                     }
                     break;
-                case 'startGame':
-                    var session = sessions[parsedMessage.sessionId];
+                case 'startGame':                    
+                    var players = getPlayerNames(session.players);
                     for (var player in session.players) {
                         session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'startGame' }));
+                        session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'updatePlayerList', players: players }));
                     }
+                    session.players[leaderToken].connection.sendUTF(JSON.stringify({ messageType: 'selectMission' }));
                     break;
                 case 'missionSelection':
                     break;
@@ -83,4 +82,12 @@ function createSession(sessionId, server) {
         players: [],
         gameState: 'newGame'
     };
+}
+
+function getPlayerNames(players) {
+    var list = []
+    for (var player in players) {
+        list.push(players[player].name);
+    }
+    return list;
 }
