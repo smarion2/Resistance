@@ -11,7 +11,8 @@
 
 <body>
     <h1>Hello world</h1>
-
+    Your role: <span data-bind="text: $data.playerRole"></span>
+    <br />
     <div data-bind="visible: playersLoading">
         <p>Player name: <input data-bind="value: $data.playerName" /></p>
         <br />

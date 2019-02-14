@@ -18,9 +18,10 @@ if ("WebSocket" in window) {
                 viewModel.sessionId(parsedMessage.sessionId);
                 break;
             case 'startGame':
-                console.log('starting game');
+                console.log('starting game you are ' + parsedMessage.role);
                 viewModel.playersLoading(false);
                 viewModel.playerList(parsedMessage.players);
+                viewModel.playerRole(parsedMessage.role);
                 break;
             case 'selectMission':
                 viewModel.isSelectingMission(true);
@@ -41,7 +42,7 @@ var gameModel = function () {
     this.isApprovingMission = ko.observable(false);
     this.sessionId = ko.observable("");
     this.playerName = ko.observable("");
-    this.playerRole = ko.observable("");
+    this.playerRole = ko.observable("");    
     this.playerList = ko.observableArray();
     this.selectedPlayerList = ko.observableArray();
 

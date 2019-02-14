@@ -54,8 +54,7 @@ wsServer.on('request', function (request) {
                     var players = getPlayerNames(session.players);
                     assignPlayerRoles(players);
                     for (var player in session.players) {
-                        session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'startGame', players: players }));
-                        session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'updatePlayerList', players: players }));
+                        session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'startGame', players: players, role: session.players[player].role }));                        
                     }
                     session.players[leaderToken].connection.sendUTF(JSON.stringify({ messageType: 'selectMission' }));
                     break;
@@ -98,24 +97,29 @@ function getPlayerNames(players) {
 }
 
 function assignPlayerRoles(players) {
-    var roleChart = [{
+    var roleChart = {
         5: [3, 2],
         6: [4, 2],
         7: [4, 3],
         8: [5, 3],
         9: [6, 3],
         10: [6, 4]
-    }];
+    };    
     var roles = roleChart[players.length];
+    console.log('player Count ' + players.length + ' roles ' + JSON.stringify(roles) );
     for (let i = players.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [players[i], players[j]] = [players[j], players[i]];
     }
-    var i = 0;
-    for (i; i < roles[0]; i++) {
-        players[i].roles = 'blue';
+    var playerIndex = 0;
+    for (var i = 0; i < roles[0]; i++) {
+        players[i].role = 'blue';
+        playerIndex++;
+        console.log('Player ' + players[i].name + ' is blue');
     }
-    for (i; i < roles[1]; i++) {
-        player[i].role = 'red';
+    for (var i = 0; i < roles[1]; i++) {
+        players[i].role = 'red';
+        playerIndex++;
+        console.log('Player ' + players[i].name + ' is red');
     }
 }
