@@ -50,15 +50,20 @@ wsServer.on('request', function (request) {
                         session.serverConnection.sendUTF(JSON.stringify({ messageType: 'updatePlayerList', players: players }));
                     }
                     break;
-                case 'startGame':                    
+                case 'startGame':
                     var players = getPlayerNames(session.players);
+                    assignPlayerRoles(players);
                     for (var player in session.players) {
-                        session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'startGame' }));
+                        session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'startGame', players: players }));
                         session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'updatePlayerList', players: players }));
                     }
                     session.players[leaderToken].connection.sendUTF(JSON.stringify({ messageType: 'selectMission' }));
                     break;
                 case 'missionSelection':
+                    var players = getPlayerNames(session.players);
+                    for (var player in session.players) {
+                        session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'approveMission', selectedPlayers: parsedMessage.selectedPlayers }));
+                    }
                     break;
                 case 'missionVote':
                     break;
@@ -90,4 +95,27 @@ function getPlayerNames(players) {
         list.push(players[player].name);
     }
     return list;
+}
+
+function assignPlayerRoles(players) {
+    var roleChart = [{
+        5: [3, 2],
+        6: [4, 2],
+        7: [4, 3],
+        8: [5, 3],
+        9: [6, 3],
+        10: [6, 4]
+    }];
+    var roles = roleChart[players.length];
+    for (let i = players.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [players[i], players[j]] = [players[j], players[i]];
+    }
+    var i = 0;
+    for (i; i < roles[0]; i++) {
+        players[i].roles = 'blue';
+    }
+    for (i; i < roles[1]; i++) {
+        player[i].role = 'red';
+    }
 }

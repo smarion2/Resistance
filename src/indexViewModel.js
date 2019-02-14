@@ -20,12 +20,14 @@ if ("WebSocket" in window) {
             case 'startGame':
                 console.log('starting game');
                 viewModel.playersLoading(false);
-                break;
-            case 'updatePlayerList':
                 viewModel.playerList(parsedMessage.players);
                 break;
             case 'selectMission':
                 viewModel.isSelectingMission(true);
+                break;
+            case 'approveMission':
+                viewModel.isApprovingMission(true);
+                viewModel.selectedPlayerList(parsedMessage.selectedPlayers);
                 break;
         }
     }
@@ -34,10 +36,12 @@ if ("WebSocket" in window) {
 }
 
 var gameModel = function () {
-    this.sessionId = ko.observable("");
     this.playersLoading = ko.observable(true);
     this.isSelectingMission = ko.observable(false);
+    this.isApprovingMission = ko.observable(false);
+    this.sessionId = ko.observable("");
     this.playerName = ko.observable("");
+    this.playerRole = ko.observable("");
     this.playerList = ko.observableArray();
     this.selectedPlayerList = ko.observableArray();
 
@@ -55,7 +59,6 @@ var gameModel = function () {
 
     this.startGame = function () {
         this.playersLoading(false);
-        console.log(this.playersLoading());
         ws.send(JSON.stringify({
             messageType: 'startGame',
             sessionId: this.sessionId()
@@ -63,9 +66,10 @@ var gameModel = function () {
     };
 
     this.submitMissionSelection = function () {
+        this.isSelectingMission(false);
         ws.send(JSON.stringify({
             messageType: 'missionSelection',
-            selectedPlayers: this.selectedPLayerList()
+            selectedPlayers: this.selectedPlayerList()
         }));
     }
 };
