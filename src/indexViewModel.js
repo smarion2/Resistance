@@ -25,6 +25,7 @@ if ("WebSocket" in window) {
                 break;
             case 'selectMission':
                 viewModel.isSelectingMission(true);
+                viewModel.numberGoingOnMission(Number(parsedMessage.numberToPick));
                 break;
             case 'approveMission':
                 viewModel.isApprovingMission(true);
@@ -39,12 +40,17 @@ if ("WebSocket" in window) {
 var gameModel = function () {
     this.playersLoading = ko.observable(true);
     this.isSelectingMission = ko.observable(false);
+    this.numberGoingOnMission = ko.observable();
     this.isApprovingMission = ko.observable(false);
     this.sessionId = ko.observable("");
     this.playerName = ko.observable("");
-    this.playerRole = ko.observable("");    
+    this.playerRole = ko.observable("");
     this.playerList = ko.observableArray();
-    this.selectedPlayerList = ko.observableArray();
+    this.selectedPlayerList = ko.observableArray([]);
+
+    this.hasSelectedCorrectNumberOfMembers = ko.computed(function () {
+        return (this.selectedPlayerList().length === Number(this.numberGoingOnMission()));
+    }, this);
 
     this.createGame = function () {
         ws.send(JSON.stringify({ messageType: 'createGame' }));
@@ -70,6 +76,7 @@ var gameModel = function () {
         this.isSelectingMission(false);
         ws.send(JSON.stringify({
             messageType: 'missionSelection',
+            sessionId: this.sessionId(),
             selectedPlayers: this.selectedPlayerList()
         }));
     }

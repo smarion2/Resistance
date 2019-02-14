@@ -52,11 +52,13 @@ wsServer.on('request', function (request) {
                     break;
                 case 'startGame':
                     var players = getPlayerNames(session.players);
-                    assignPlayerRoles(players);
+                    assignPlayerRoles(session.players);
                     for (var player in session.players) {
-                        session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'startGame', players: players, role: session.players[player].role }));                        
+                        console.log('player role: ' + session.players[player].role);
+                        session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'startGame', players: players, role: session.players[player].role }));
                     }
-                    session.players[leaderToken].connection.sendUTF(JSON.stringify({ messageType: 'selectMission' }));
+                    var numberOfMissionMembers = getMissionMembers(players.length, session.roundNumber);
+                    session.players[leaderToken].connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }));
                     break;
                 case 'missionSelection':
                     var players = getPlayerNames(session.players);
@@ -84,7 +86,10 @@ function createSession(sessionId, server) {
     sessions[sessionId] = {
         serverConnection: server,
         players: [],
-        gameState: 'newGame'
+        gameState: 'newGame',
+        roundNumber: 0,
+        blueWins: 0,
+        redWins: 0
     };
 }
 
@@ -96,6 +101,18 @@ function getPlayerNames(players) {
     return list;
 }
 
+function getMissionMembers(playerCount, round) {
+    var members = {
+        5: [2, 3, 2, 3, 3],
+        6: [2, 3, 4, 3, 4],
+        7: [2, 3, 3, 4, 4],
+        8: [3, 4, 4, 5, 5],
+        9: [3, 4, 4, 5, 5],
+        10: [3, 4, 4, 5, 5]
+    };
+    return members[playerCount][round];
+}
+
 function assignPlayerRoles(players) {
     var roleChart = {
         5: [3, 2],
@@ -104,22 +121,22 @@ function assignPlayerRoles(players) {
         8: [5, 3],
         9: [6, 3],
         10: [6, 4]
-    };    
+    };
     var roles = roleChart[players.length];
-    console.log('player Count ' + players.length + ' roles ' + JSON.stringify(roles) );
+    console.log('player Count ' + players.length + ' roles ' + JSON.stringify(roles));
     for (let i = players.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [players[i], players[j]] = [players[j], players[i]];
     }
     var playerIndex = 0;
     for (var i = 0; i < roles[0]; i++) {
-        players[i].role = 'blue';
+        players[playerIndex].role = 'blue';
+        console.log('Player ' + players[playerIndex].name + ' is blue');
         playerIndex++;
-        console.log('Player ' + players[i].name + ' is blue');
     }
     for (var i = 0; i < roles[1]; i++) {
-        players[i].role = 'red';
+        players[playerIndex].role = 'red';
+        console.log('Player ' + players[playerIndex].name + ' is red');
         playerIndex++;
-        console.log('Player ' + players[i].name + ' is red');
     }
 }

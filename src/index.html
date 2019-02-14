@@ -31,10 +31,10 @@
     </div>
 
     <div data-bind="visible: isSelectingMission">
-        <p>You are the mission leader please pick a good team</p>
-        <select multiple="multiple"
-            data-bind="options: $data.playerList, selectedOptions: $data.selectedPlayerList"></select>
-        <button data-bind='click: submitMissionSelection'>Submit</button>
+        <p>You are the mission leader please pick <span data-bind="text: $data.numberGoingOnMission"></span> players:</p>
+        <p>So far you have picked <span data-bind="text: $data.selectedPlayerList().length"></span> players</p>
+        <select multiple="multiple" data-bind="options: $data.playerList, selectedOptions: $data.selectedPlayerList"></select>
+        <button data-bind='click: submitMissionSelection, enable: hasSelectedCorrectNumberOfMembers'>Submit</button>
     </div>
 
     <div data-bind="visible: isApprovingMission">
@@ -45,13 +45,14 @@
                 <b data-bind="text: $data"></b>
             </li>
         </ul>
-
+        <button>Approve</button>
+        <br />
+        <button>Reject</button>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
-        integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
         crossorigin="anonymous"></script>
     <script type="text/javascript" src="./knockout-3.4.2.js"></script>
     <script type="text/javascript" src="./indexViewModel.js"></script>
