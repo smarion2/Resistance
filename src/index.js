@@ -18,7 +18,7 @@ var server = http.createServer(function (request, response) {
 });
 
 server.listen(webSocketSeverPort, function () {
-    console.log(new Date() + " Server is listening on port " + webSocketSeverPort);
+    console.log(new Date() + ' Server is listening on port ' + webSocketSeverPort);
 });
 
 var wsServer = new webSocketServer({

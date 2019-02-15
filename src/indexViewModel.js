@@ -1,9 +1,9 @@
 var viewModel;
 var ws;
 
-if ("WebSocket" in window) {
+if ('WebSocket' in window) {
     if (ws == null) {
-        ws = new WebSocket("ws:localhost:1337", 'echo-protocol');
+        ws = new WebSocket('ws:localhost:1337', 'echo-protocol');
     }
 
     ws.onmessage = function (message) {
@@ -34,7 +34,7 @@ if ("WebSocket" in window) {
         }
     }
 } else {
-    alert("Websockets are not supported in this browser please use something not terrible");
+    alert('Websockets are not supported in this browser please use something not terrible');
 }
 
 var gameModel = function () {
@@ -42,9 +42,9 @@ var gameModel = function () {
     this.isSelectingMission = ko.observable(false);
     this.numberGoingOnMission = ko.observable();
     this.isApprovingMission = ko.observable(false);
-    this.sessionId = ko.observable("");
-    this.playerName = ko.observable("");
-    this.playerRole = ko.observable("");
+    this.sessionId = ko.observable('');
+    this.playerName = ko.observable('');
+    this.playerRole = ko.observable('');
     this.playerList = ko.observableArray();
     this.selectedPlayerList = ko.observableArray([]);
 
