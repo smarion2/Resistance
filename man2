@@ -1,0 +1,142 @@
+[1mdiff --git a/src/index.html b/src/index.html[m
+[1mindex e023579..0776deb 100644[m
+[1m--- a/src/index.html[m
+[1m+++ b/src/index.html[m
+[36m@@ -2,47 +2,47 @@[m
+ <html>[m
+ [m
+ <head>[m
+[31m-    <meta charset="utf-8">[m
+[31m-    <meta http-equiv="X-UA-Compatible" content="IE=edge">[m
+[31m-    <meta name="viewport" content="width=device-width, initial-scale=1">[m
+[31m-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"[m
+[31m-        integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">[m
+[32m+[m[32m    <meta charset='utf-8'>[m
+[32m+[m[32m    <meta http-equiv='X-UA-Compatible' content='IE=edge'>[m
+[32m+[m[32m    <meta name='viewport' content='width=device-width, initial-scale=1'>[m
+[32m+[m[32m    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css'[m
+[32m+[m[32m        integrity='sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ' crossorigin='anonymous'>[m
+ </head>[m
+ [m
+ <body>[m
+     <h1>Hello world</h1>[m
+[31m-    Your role: <span data-bind="text: $data.playerRole"></span>[m
+[32m+[m[32m    Your role: <span data-bind='text: $data.playerRole'></span>[m
+     <br />[m
+[31m-    <div data-bind="visible: playersLoading">[m
+[31m-        <p>Player name: <input data-bind="value: $data.playerName" /></p>[m
+[32m+[m[32m    <div data-bind='visible: playersLoading'>[m
+[32m+[m[32m        <p>Player name: <input data-bind='value: $data.playerName' /></p>[m
+         <br />[m
+[31m-        <p>Session Id: <input data-bind="value: $data.sessionId" /></p>[m
+[32m+[m[32m        <p>Session Id: <input data-bind='value: $data.sessionId' /></p>[m
+         <br />[m
+         <button data-bind='click: joinGame'>Join game</button>[m
+         <button data-bind='click: createGame'>Create game</button>[m
+         <button data-bind='click: startGame'>Start game</button>[m
+[31m-        Join as session: <span data-bind="text: sessionId"></span>[m
+[32m+[m[32m        Join as session: <span data-bind='text: sessionId'></span>[m
+         <br />[m
+[31m-        <ul data-bind="foreach: playerList">[m
+[32m+[m[32m        <ul data-bind='foreach: playerList'>[m
+             <li>[m
+[31m-                <b data-bind="text: $data"></b>[m
+[32m+[m[32m                <b data-bind='text: $data'></b>[m
+             </li>[m
+         </ul>[m
+     </div>[m
+ [m
+[31m-    <div data-bind="visible: isSelectingMission">[m
+[31m-        <p>You are the mission leader please pick <span data-bind="text: $data.numberGoingOnMission"></span> players:</p>[m
+[31m-        <p>So far you have picked <span data-bind="text: $data.selectedPlayerList().length"></span> players</p>[m
+[31m-        <select multiple="multiple" data-bind="options: $data.playerList, selectedOptions: $data.selectedPlayerList"></select>[m
+[32m+[m[32m    <div data-bind='visible: isSelectingMission'>[m
+[32m+[m[32m        <p>You are the mission leader please pick <span data-bind='text: $data.numberGoingOnMission'></span> players:</p>[m
+[32m+[m[32m        <p>So far you have picked <span data-bind='text: $data.selectedPlayerList().length'></span> players</p>[m
+[32m+[m[32m        <select multiple='multiple' data-bind='options: $data.playerList, selectedOptions: $data.selectedPlayerList'></select>[m
+         <button data-bind='click: submitMissionSelection, enable: hasSelectedCorrectNumberOfMembers'>Submit</button>[m
+     </div>[m
+ [m
+[31m-    <div data-bind="visible: isApprovingMission">[m
+[32m+[m[32m    <div data-bind='visible: isApprovingMission'>[m
+         <p>These are the players selected for the mission... </p>[m
+         <br />[m
+[31m-        <ul data-bind="foreach: selectedPlayerList">[m
+[32m+[m[32m        <ul data-bind='foreach: selectedPlayerList'>[m
+             <li>[m
+[31m-                <b data-bind="text: $data"></b>[m
+[32m+[m[32m                <b data-bind='text: $data'></b>[m
+             </li>[m
+         </ul>[m
+         <button>Approve</button>[m
+[36m@@ -50,12 +50,12 @@[m
+         <button>Reject</button>[m
+     </div>[m
+ [m
+[31m-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>[m
+[31m-    <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>[m
+[31m-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"[m
+[31m-        crossorigin="anonymous"></script>[m
+[31m-    <script type="text/javascript" src="./knockout-3.4.2.js"></script>[m
+[31m-    <script type="text/javascript" src="./indexViewModel.js"></script>[m
+[32m+[m[32m    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>[m
+[32m+[m[32m    <script src='https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js'></script>[m
+[32m+[m[32m    <script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js' integrity='sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn'[m
+[32m+[m[32m        crossorigin='anonymous'></script>[m
+[32m+[m[32m    <script type='text/javascript' src='./knockout-3.4.2.js'></script>[m
+[32m+[m[32m    <script type='text/javascript' src='./indexViewModel.js'></script>[m
+ </body>[m
+ [m
+ </html>[m
+\ No newline at end of file[m
+[1mdiff --git a/src/index.js b/src/index.js[m
+[1mindex 8a761f3..f0b4ff1 100644[m
+[1m--- a/src/index.js[m
+[1m+++ b/src/index.js[m
+[36m@@ -18,7 +18,7 @@[m [mvar server = http.createServer(function (request, response) {[m
+ });[m
+ [m
+ server.listen(webSocketSeverPort, function () {[m
+[31m-    console.log(new Date() + " Server is listening on port " + webSocketSeverPort);[m
+[32m+[m[32m    console.log(new Date() + ' Server is listening on port ' + webSocketSeverPort);[m
+ });[m
+ [m
+ var wsServer = new webSocketServer({[m
+[1mdiff --git a/src/indexViewModel.js b/src/indexViewModel.js[m
+[1mindex 3b5e47d..8550631 100644[m
+[1m--- a/src/indexViewModel.js[m
+[1m+++ b/src/indexViewModel.js[m
+[36m@@ -1,9 +1,9 @@[m
+ var viewModel;[m
+ var ws;[m
+ [m
+[31m-if ("WebSocket" in window) {[m
+[32m+[m[32mif ('WebSocket' in window) {[m
+     if (ws == null) {[m
+[31m-        ws = new WebSocket("ws:localhost:1337", 'echo-protocol');[m
+[32m+[m[32m        ws = new WebSocket('ws:localhost:1337', 'echo-protocol');[m
+     }[m
+ [m
+     ws.onmessage = function (message) {[m
+[36m@@ -34,7 +34,7 @@[m [mif ("WebSocket" in window) {[m
+         }[m
+     }[m
+ } else {[m
+[31m-    alert("Websockets are not supported in this browser please use something not terrible");[m
+[32m+[m[32m    alert('Websockets are not supported in this browser please use something not terrible');[m
+ }[m
+ [m
+ var gameModel = function () {[m
+[36m@@ -42,9 +42,9 @@[m [mvar gameModel = function () {[m
+     this.isSelectingMission = ko.observable(false);[m
+     this.numberGoingOnMission = ko.observable();[m
+     this.isApprovingMission = ko.observable(false);[m
+[31m-    this.sessionId = ko.observable("");[m
+[31m-    this.playerName = ko.observable("");[m
+[31m-    this.playerRole = ko.observable("");[m
+[32m+[m[32m    this.sessionId = ko.observable('');[m
+[32m+[m[32m    this.playerName = ko.observable('');[m
+[32m+[m[32m    this.playerRole = ko.observable('');[m
+     this.playerList = ko.observableArray();[m
+     this.selectedPlayerList = ko.observableArray([]);[m
+ [m

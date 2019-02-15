@@ -1,4 +1,5 @@
 var webSocketServer = require('websocket').server;
+var gameManager = require('./gameManager.js');
 var http = require('http');
 var express = require('express');
 
@@ -37,10 +38,7 @@ wsServer.on('request', function (request) {
             var session = sessions[parsedMessage.sessionId];
             switch (parsedMessage.messageType) {
                 case 'createGame':
-                    console.log('creating game!');
-                    var sessionId = createGameId();
-                    createSession(sessionId, connection);
-                    connection.sendUTF(JSON.stringify({ messageType: 'createGame', sessionId: sessionId }));
+                    gameManager.createNewGame(sessions, connection);                    
                     break;
                 case 'joinGame':
                     if (session) {
@@ -51,19 +49,23 @@ wsServer.on('request', function (request) {
                     }
                     break;
                 case 'startGame':
-                    var players = getPlayerNames(session.players);
-                    assignPlayerRoles(session.players);
-                    for (var player in session.players) {
-                        console.log('player role: ' + session.players[player].role);
-                        session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'startGame', players: players, role: session.players[player].role }));
+                    if (session) {
+                        var players = getPlayerNames(session.players);
+                        assignPlayerRoles(session.players);
+                        for (var player in session.players) {
+                            console.log('player role: ' + session.players[player].role);
+                            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'startGame', players: players, role: session.players[player].role }));
+                        }
+                        var numberOfMissionMembers = getMissionMembers(players.length, session.roundNumber);
+                        session.players[leaderToken].connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }));
                     }
-                    var numberOfMissionMembers = getMissionMembers(players.length, session.roundNumber);
-                    session.players[leaderToken].connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }));
                     break;
                 case 'missionSelection':
-                    var players = getPlayerNames(session.players);
-                    for (var player in session.players) {
-                        session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'approveMission', selectedPlayers: parsedMessage.selectedPlayers }));
+                    if (session) {
+                        var players = getPlayerNames(session.players);
+                        for (var player in session.players) {
+                            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'approveMission', selectedPlayers: parsedMessage.selectedPlayers }));
+                        }
                     }
                     break;
                 case 'missionVote':
@@ -78,20 +80,7 @@ wsServer.on('request', function (request) {
     });
 });
 
-function createGameId() {
-    return 'aaaa';
-}
 
-function createSession(sessionId, server) {
-    sessions[sessionId] = {
-        serverConnection: server,
-        players: [],
-        gameState: 'newGame',
-        roundNumber: 0,
-        blueWins: 0,
-        redWins: 0
-    };
-}
 
 function getPlayerNames(players) {
     var list = []
