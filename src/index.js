@@ -49,6 +49,7 @@ wsServer.on('request', function (request) {
                     gameManager.submitMissionSelection(parsedMessage);
                     break;
                 case 'missionVote':
+                    gameManager.registerVote(parsedMessage);
                     break;
                 case 'missionResult':
                     break;

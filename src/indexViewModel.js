@@ -48,7 +48,7 @@ var gameModel = function () {
     this.playerList = ko.observableArray();
     this.selectedPlayerList = ko.observableArray([]);
 
-    this.hasSelectedCorrectNumberOfMembers = ko.computed(function () {
+    this.hasSelectedCorrectNumberOfMembers = ko.pureComputed(function () {
         return (this.selectedPlayerList().length === Number(this.numberGoingOnMission()));
     }, this);
 
@@ -78,6 +78,26 @@ var gameModel = function () {
             messageType: 'missionSelection',
             sessionId: this.sessionId(),
             selectedPlayers: this.selectedPlayerList()
+        }));
+    }
+
+    this.approveMission = function () {
+        this.isApprovingMission(false);
+        ws.send(JSON.stringify({
+            messageType: 'missionVote',
+            name: this.playerName(),
+            sessionId: this.sessionId(),
+            approvedMission: true
+        }));
+    }
+
+    this.rejectMission = function () {
+        this.isApprovingMission(false);
+        ws.send(JSON.stringify({
+            messageType: 'missionVote',
+            name: this.playerName(),
+            sessionId: this.sessionId(),
+            approvedMission: false
         }));
     }
 };

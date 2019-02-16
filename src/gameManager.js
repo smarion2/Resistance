@@ -47,11 +47,37 @@ exports.submitMissionSelection = function(message) {
     }
 };
 
+exports.registerVote = function(message) {
+    var session = sessionManager.getSessionBySessionId(message.sessionId);
+    if (session) {
+        session.missionVotes++;
+        console.log('total mission votes: ' + session.missionVotes); 
+        console.log('total players ' + session.players.length);
+        for (var player in session.players) {
+            if (session.players[player].name === message.name) {
+                session.players[player].approvedMission = message.approvedMission;
+                break;
+            }
+        }        
+        if (session.missionVotes === session.players.length) {
+            var results = [];
+            for (var player in session.players) {
+                results.push({
+                    name: session.players[player].name,
+                    results: session.players[player].approvedMission
+                });
+                session.players[player].approvedMission = message.approvedMission;
+            }
+            session.serverConnection.sendUTF(JSON.stringify({ messageType: 'missionVoteResults', results: results }));
+        }
+    }
+}
+
 function assignPlayerRoles(players) {
     var roleChart = {
         5: [3, 2],
         6: [4, 2],
-        7: [4, 3],
+        7: [4, 3],        
         8: [5, 3],
         9: [6, 3],
         10: [6, 4]
