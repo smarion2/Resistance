@@ -19,9 +19,9 @@ if ('WebSocket' in window) {
                 break;
             case 'startGame':
                 console.log('starting game you are ' + parsedMessage.role);
-                viewModel.playersLoading(false);
-                viewModel.playerList(parsedMessage.players);
+                viewModel.playersLoading(false);                
                 viewModel.playerRole(parsedMessage.role);
+                viewModel.playerList(parsedMessage.players);
                 break;
             case 'selectMission':
                 viewModel.isSelectingMission(true);

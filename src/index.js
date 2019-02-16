@@ -1,13 +1,12 @@
 var webSocketServer = require('websocket').server;
 var gameManager = require('./gameManager.js');
+var sessionManager = require('./sessionManager.js');
 var http = require('http');
 var express = require('express');
 
 var webSocketSeverPort = 1337;
 var app = express();
 
-var sessions = [];
-var leaderToken = 0;
 app.use(express.static(__dirname));
 
 app.listen(3000);
@@ -30,43 +29,24 @@ var wsServer = new webSocketServer({
 wsServer.on('request', function (request) {
     var connection = request.accept('echo-protocol', request.origin);
     console.log(new Date() + ' Connection accepted.');
-
     connection.on('message', function (message) {
         var parsedMessage = JSON.parse(message.utf8Data);
         console.log('mesesage recieved ' + JSON.stringify(parsedMessage));
-        if (message.type === 'utf8') {
-            var session = sessions[parsedMessage.sessionId];
+        if (message.type === 'utf8') {            
             switch (parsedMessage.messageType) {
                 case 'createGame':
-                    gameManager.createNewGame(sessions, connection);                    
+                    gameManager.createNewGame(connection);
                     break;
                 case 'joinGame':
-                    if (session) {
-                        session.players.push({ name: parsedMessage.name, connection: connection });
-                        var players = getPlayerNames(session.players);
-                        console.log('Player joined session:' + parsedMessage.sessionId + ' player count: ' + session.players.length);
-                        session.serverConnection.sendUTF(JSON.stringify({ messageType: 'updatePlayerList', players: players }));
-                    }
+                    gameManager.joinGame(parsedMessage, connection);
                     break;
                 case 'startGame':
-                    if (session) {
-                        var players = getPlayerNames(session.players);
-                        assignPlayerRoles(session.players);
-                        for (var player in session.players) {
-                            console.log('player role: ' + session.players[player].role);
-                            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'startGame', players: players, role: session.players[player].role }));
-                        }
-                        var numberOfMissionMembers = getMissionMembers(players.length, session.roundNumber);
-                        session.players[leaderToken].connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }));
-                    }
+                    var sessionId = parsedMessage.sessionId;
+                    gameManager.startGame(sessionId);
+                    gameManager.assignMissionLeader(sessionId);
                     break;
                 case 'missionSelection':
-                    if (session) {
-                        var players = getPlayerNames(session.players);
-                        for (var player in session.players) {
-                            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'approveMission', selectedPlayers: parsedMessage.selectedPlayers }));
-                        }
-                    }
+                    gameManager.submitMissionSelection(parsedMessage);
                     break;
                 case 'missionVote':
                     break;
@@ -79,53 +59,3 @@ wsServer.on('request', function (request) {
         }
     });
 });
-
-
-
-function getPlayerNames(players) {
-    var list = []
-    for (var player in players) {
-        list.push(players[player].name);
-    }
-    return list;
-}
-
-function getMissionMembers(playerCount, round) {
-    var members = {
-        5: [2, 3, 2, 3, 3],
-        6: [2, 3, 4, 3, 4],
-        7: [2, 3, 3, 4, 4],
-        8: [3, 4, 4, 5, 5],
-        9: [3, 4, 4, 5, 5],
-        10: [3, 4, 4, 5, 5]
-    };
-    return members[playerCount][round];
-}
-
-function assignPlayerRoles(players) {
-    var roleChart = {
-        5: [3, 2],
-        6: [4, 2],
-        7: [4, 3],
-        8: [5, 3],
-        9: [6, 3],
-        10: [6, 4]
-    };
-    var roles = roleChart[players.length];
-    console.log('player Count ' + players.length + ' roles ' + JSON.stringify(roles));
-    for (let i = players.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [players[i], players[j]] = [players[j], players[i]];
-    }
-    var playerIndex = 0;
-    for (var i = 0; i < roles[0]; i++) {
-        players[playerIndex].role = 'blue';
-        console.log('Player ' + players[playerIndex].name + ' is blue');
-        playerIndex++;
-    }
-    for (var i = 0; i < roles[1]; i++) {
-        players[playerIndex].role = 'red';
-        console.log('Player ' + players[playerIndex].name + ' is red');
-        playerIndex++;
-    }
-}
