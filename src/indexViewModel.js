@@ -31,6 +31,10 @@ if ('WebSocket' in window) {
                 viewModel.isApprovingMission(true);
                 viewModel.selectedPlayerList(parsedMessage.selectedPlayers);
                 break;
+            case 'missionVoteResults':
+                viewModel.missionVotesRecieved(true);
+                viewModel.missionVoteResults(parsedMessage.results);
+                break;
         }
     }
 } else {
@@ -42,11 +46,13 @@ var gameModel = function () {
     this.isSelectingMission = ko.observable(false);
     this.numberGoingOnMission = ko.observable();
     this.isApprovingMission = ko.observable(false);
+    this.missionVotesRecieved = ko.observable(false);
     this.sessionId = ko.observable('');
     this.playerName = ko.observable('');
     this.playerRole = ko.observable('');
     this.playerList = ko.observableArray();
     this.selectedPlayerList = ko.observableArray([]);
+    this.missionVoteResults = ko.observableArray([]);
 
     this.hasSelectedCorrectNumberOfMembers = ko.pureComputed(function () {
         return (this.selectedPlayerList().length === Number(this.numberGoingOnMission()));

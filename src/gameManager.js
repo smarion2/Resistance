@@ -28,14 +28,7 @@ exports.startGame = function (sessionId) {
 };
 
 exports.assignMissionLeader = function(sessionId) {
-    var session = sessionManager.getSessionBySessionId(sessionId);
-    if (session) {
-        session.leaderToken = session.leaderToken % session.players.length;
-        console.log(session.leaderToken);
-        var numberOfMissionMembers = getMissionMembers(session.players.length, session.roundNumber);
-        session.players[session.leaderToken].connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }));
-        session.leaderToken++;
-    }
+    assignMissionLeader(sessionId);
 };
 
 exports.submitMissionSelection = function(message) {
@@ -61,15 +54,34 @@ exports.registerVote = function(message) {
         }        
         if (session.missionVotes === session.players.length) {
             var results = [];
+            var totalSuccess = 0;
+            session.missionVotes = 0;
             for (var player in session.players) {
+                if (session.players[player].approvedMission) {
+                    totalSuccess++;
+                }
                 results.push({
                     name: session.players[player].name,
-                    results: session.players[player].approvedMission
+                    result: session.players[player].approvedMission
                 });
                 session.players[player].approvedMission = message.approvedMission;
             }
             session.serverConnection.sendUTF(JSON.stringify({ messageType: 'missionVoteResults', results: results }));
+            if (totalSuccess <= session.players.length) {
+                assignMissionLeader(message.sessionId);
+            }
         }
+    }
+}
+
+function assignMissionLeader(sessionId) {
+    var session = sessionManager.getSessionBySessionId(sessionId);
+    if (session) {
+        session.leaderToken = session.leaderToken % session.players.length;
+        console.log(session.leaderToken);
+        var numberOfMissionMembers = getMissionMembers(session.players.length, session.roundNumber);
+        session.players[session.leaderToken].connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }));
+        session.leaderToken++;
     }
 }
 
