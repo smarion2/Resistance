@@ -10,7 +10,7 @@ exports.joinGame = function (message, connection) {
     var session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
         session.players.push({ name: message.name, connection: connection });
-        console.log('Player joined session:' + message.sessionId + ' player count: ' + session.players.length);
+        console.log('Player joined session:' + message.sessionId + ' Total player count: ' + session.players.length);
         // broadcast players to everyone?
     }
 };
@@ -21,7 +21,7 @@ exports.startGame = function (sessionId) {
         assignPlayerRoles(session.players);
         var players = getPlayerNames(session.players);
         for (var player in session.players) {
-            console.log('player role: ' + session.players[player].role);
+            console.log('Roles have been assigned, time to start the game');
             session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'startGame', role: session.players[player].role, players: players }));
         }
     }
@@ -34,13 +34,17 @@ exports.assignMissionLeader = function(sessionId) {
 exports.submitMissionSelection = function(message) {
     var session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
+        console.log('Misison has been selected, sending out to players for approval');
+        console.log(JSON.stringify(message.selectedPlayers));
         for (var player in session.players) {
-            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'approveMission', selectedPlayers: message.selectedPlayers }));
-            for (var person in selectedPlayers) {
-                if (person === session.players[player].name) {
+            for (var i = 0; i < message.selectedPlayers.length; i++) {
+                if (message.selectedPlayers[i] === session.players[player].name) {
+                    console.log(session.players[player].name + ' has been registered to go on a mission');
                     session.players[player].isOnMission = true;
+                    break;          
                 }
             }
+            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'approveMission', selectedPlayers: message.selectedPlayers }));
         }
     }
 };
@@ -49,8 +53,7 @@ exports.registerVote = function(message) {
     var session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
         session.missionVotes++;
-        console.log('total mission votes: ' + session.missionVotes); 
-        console.log('total players ' + session.players.length);
+        console.log('Vote has been submitted. Total mission votes recived so far ' + session.missionVotes);         
         for (var player in session.players) {
             if (session.players[player].name === message.name) {
                 session.players[player].approvedMission = message.approvedMission;
@@ -72,11 +75,15 @@ exports.registerVote = function(message) {
                 session.players[player].approvedMission = message.approvedMission;
             }
             session.serverConnection.sendUTF(JSON.stringify({ messageType: 'missionVoteResults', results: results }));
-            if (totalSuccess <= session.players.length) {
+            if (totalSuccess <= (session.players.length / 2)) {
+                // TO DO keep track faile vote rounds blue auto fails at 5 in a row.
+                console.log('Mission did not recieve enough votes. Assigning new leader');
                 assignMissionLeader(message.sessionId);
             } else {
+                console.log('Mission passed');
                 for (var player in session.players) {
                     if (session.players[player].isOnMission) {
+                        console.log(session.players[player].name + ' is being sent on the mission');
                         session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'runMission' }));
                     }
                 }
@@ -89,7 +96,33 @@ exports.registerResult = function(message) {
     var session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
         session.missionResults++;
+        message.passedMission ? session.missionPasses++ : session.missionFails++;
         console.log('Total mission results: ' + session.missionResults);
+        if (session.missionResults === getMissionMembers(session.players.length, session.roundNumber)) {
+            session.roundNumber++;
+            var blueWins = false;
+            if (session.players.length >= 9) {
+                if (session.missionFails < 2) {
+                    blueWins = true;
+                    session.blueWins += 1;
+                } else {
+                    session.redWins += 1;
+                }
+            } else {
+                if (session.missionFails === 0) {
+                    blueWins = true;
+                    session.blueWins += 1;
+                } else {
+                    session.redWins += 1;
+                }
+            }
+            session.serverConnection.sendUTF(JSON.stringify({ messageType: 'missionResults', blueWins: blueWins, blueCount: session.missionPasses, redCount: session.missionFails}));
+            if (session.blueWins === 3 || session.redWins === 3) {
+                session.serverConnection.sendUTF(JSON.stringify({ messageType: 'winner', blueWins: (session.blueWins === 3) }));
+            } else {
+                assignMissionLeader(message.sessionId);
+            }
+        }
     }
 };
 
@@ -97,7 +130,7 @@ function assignMissionLeader(sessionId) {
     var session = sessionManager.getSessionBySessionId(sessionId);
     if (session) {
         session.leaderToken = session.leaderToken % session.players.length;
-        console.log(session.leaderToken);
+        console.log('Leader token is at position ' + session.leaderToken);
         var numberOfMissionMembers = getMissionMembers(session.players.length, session.roundNumber);
         session.players[session.leaderToken].connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }));
         session.leaderToken++;

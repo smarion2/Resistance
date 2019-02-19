@@ -23,7 +23,9 @@ function createSession(server) {
         blueWins: 0,
         redWins: 0,
         missionVotes: 0,
-        missionResults: 0
+        missionResults: 0,
+        missionPasses: 0,
+        missionFails: 0
     };
     return sessionId;
 }

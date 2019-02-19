@@ -38,6 +38,9 @@ if ('WebSocket' in window) {
             case 'runMission':
                 viewModel.isRunningMission(true);
                 break;
+            case 'missionResults':
+                console.log('does blue win? ' + parsedMessage.blueWins);
+                break;
         }
     }
 } else {
@@ -117,7 +120,7 @@ var gameModel = function () {
             messageType: 'missionResult',
             name: this.playerName(),
             sessionId: this.sessionId(),
-            approvedMission: true
+            passedMission: true
         }));
     }
 
@@ -127,7 +130,7 @@ var gameModel = function () {
             messageType: 'missionResult',
             name: this.playerName(),
             sessionId: this.sessionId(),
-            approvedMission: false
+            passedMission: false
         }));
     }
 };
