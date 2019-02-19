@@ -1,6 +1,5 @@
 var webSocketServer = require('websocket').server;
 var gameManager = require('./gameManager.js');
-var sessionManager = require('./sessionManager.js');
 var http = require('http');
 var express = require('express');
 

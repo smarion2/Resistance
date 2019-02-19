@@ -22,7 +22,8 @@ function createSession(server) {
         roundNumber: 0,
         blueWins: 0,
         redWins: 0,
-        missionVotes: 0
+        missionVotes: 0,
+        missionResults: 0
     };
     return sessionId;
 }

@@ -36,6 +36,11 @@ exports.submitMissionSelection = function(message) {
     if (session) {
         for (var player in session.players) {
             session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'approveMission', selectedPlayers: message.selectedPlayers }));
+            for (var person in selectedPlayers) {
+                if (person === session.players[player].name) {
+                    session.players[player].isOnMission = true;
+                }
+            }
         }
     }
 };
@@ -69,10 +74,24 @@ exports.registerVote = function(message) {
             session.serverConnection.sendUTF(JSON.stringify({ messageType: 'missionVoteResults', results: results }));
             if (totalSuccess <= session.players.length) {
                 assignMissionLeader(message.sessionId);
+            } else {
+                for (var player in session.players) {
+                    if (session.players[player].isOnMission) {
+                        session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'runMission' }));
+                    }
+                }
             }
         }
     }
 }
+
+exports.registerResult = function(message) {
+    var session = sessionManager.getSessionBySessionId(message.sessionId);
+    if (session) {
+        session.missionResults++;
+        console.log('Total mission results: ' + session.missionResults);
+    }
+};
 
 function assignMissionLeader(sessionId) {
     var session = sessionManager.getSessionBySessionId(sessionId);

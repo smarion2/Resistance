@@ -35,6 +35,9 @@ if ('WebSocket' in window) {
                 viewModel.missionVotesRecieved(true);
                 viewModel.missionVoteResults(parsedMessage.results);
                 break;
+            case 'runMission':
+                viewModel.isRunningMission(true);
+                break;
         }
     }
 } else {
@@ -47,6 +50,7 @@ var gameModel = function () {
     this.numberGoingOnMission = ko.observable();
     this.isApprovingMission = ko.observable(false);
     this.missionVotesRecieved = ko.observable(false);
+    this.isRunningMission = ko.observable(false);
     this.sessionId = ko.observable('');
     this.playerName = ko.observable('');
     this.playerRole = ko.observable('');
@@ -101,6 +105,26 @@ var gameModel = function () {
         this.isApprovingMission(false);
         ws.send(JSON.stringify({
             messageType: 'missionVote',
+            name: this.playerName(),
+            sessionId: this.sessionId(),
+            approvedMission: false
+        }));
+    }
+
+    this.passMission = function () {
+        this.isRunningMission(false);
+        ws.send(JSON.stringify({
+            messageType: 'missionResult',
+            name: this.playerName(),
+            sessionId: this.sessionId(),
+            approvedMission: true
+        }));
+    }
+
+    this.failMission = function () {
+        this.isRunningMission(false);
+        ws.send(JSON.stringify({
+            messageType: 'missionResult',
             name: this.playerName(),
             sessionId: this.sessionId(),
             approvedMission: false
