@@ -21,12 +21,41 @@ exports.startGame = function (sessionId) {
         assignPlayerRoles(session.players);
         var players = getPlayerNames(session.players);
         for (var player in session.players) {
-            console.log('Roles have been assigned, time to start the game');
-            session.gameState = 'gameStarted';
+            console.log('Roles have been assigned, time to start the game');            
             session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'startGame', role: session.players[player].role, players: players }));
         }
     }
 };
+
+exports.reconnectToGame = function (message, connection) {
+    var session = sessionManager.getSessionBySessionId(message.sessionId);
+    if (session) {
+        for (var player in session.players) {
+            if (session.players[player].name === message.name) {
+                session.players[player].connection = connection;
+                switch (session.gameState) {
+                    case 'missionLeaderAssigned':
+                        if (session.players[player].isMissionLeader) {
+                            var numberOfMissionMembers = getMissionMembers(session.players.length, session.roundNumber);                            
+                            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }))
+                        }
+                        break;
+                    case 'missionSubmitted':
+                        if (session.players[player].approvedMission === null) {
+                            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'approveMission', selectedPlayers: session.selectedPlayers }));
+                        }
+                        break;
+                    case 'missionStarted':
+                        if (session.players[player].isOnMission && !session.players[player].hasSubmitMissionResults) {
+                            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'runMission' }));
+                        }
+                        break;  
+                }
+            }
+            break;
+        }
+    }
+}
 
 exports.assignMissionLeader = function (sessionId) {
     assignMissionLeader(sessionId);
@@ -36,6 +65,8 @@ exports.submitMissionSelection = function (message) {
     var session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
         console.log('Misison has been selected, sending out to players for approval');
+        session.gameState = 'missionSubmitted';
+        session.selectedPlayers = message.selectedPlayers;
         console.log(JSON.stringify(message.selectedPlayers));
         for (var player in session.players) {
             for (var i = 0; i < message.selectedPlayers.length; i++) {
@@ -65,6 +96,7 @@ exports.registerVote = function (message) {
             var results = [];
             var totalSuccess = 0;
             session.missionVotes = 0;
+            session.gameState = 'missionStarted';
             for (var player in session.players) {
                 if (session.players[player].approvedMission) {
                     totalSuccess++;
@@ -98,6 +130,11 @@ exports.registerVote = function (message) {
 exports.registerResult = function (message) {
     var session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
+        for (var player in session.players) {
+            if (session.players[player].name === message.name) {
+                session.players[player].hasSubmitMissionResults = true;
+            }
+        }
         session.missionResults++;
         message.passedMission ? session.missionPasses++ : session.missionFails++;
         console.log('Total mission results: ' + session.missionResults);
@@ -123,6 +160,10 @@ exports.registerResult = function (message) {
             if (session.blueWins === 3 || session.redWins === 3) {
                 session.serverConnection.sendUTF(JSON.stringify({ messageType: 'winner', blueWins: (session.blueWins === 3) }));
             } else {
+                sessionManager.resetWhoGoesOnMission(message.sessionId);
+                sessionManager.resetMissionSelectionVotes(message.sessionId);
+                sessionManager.resetSubmittedMissionResult(message.sessionId);
+                sessionManager.resetSelectedPlayers(message.sessionId);
                 assignMissionLeader(message.sessionId);
             }
             session.missionResults = 0;
@@ -137,12 +178,13 @@ function assignMissionLeader(sessionId) {
     var session = sessionManager.getSessionBySessionId(sessionId);
     if (session) {
         session.gameState = 'missionLeaderAssigned';
+        sessionManager.resetMissionLeader(sessionId);
         session.leaderToken = session.leaderToken % session.players.length;
         console.log('Leader token is at position ' + session.leaderToken);
         var numberOfMissionMembers = getMissionMembers(session.players.length, session.roundNumber);
         var player = session.players[session.leaderToken];
         player.isMissionLeader = true;
-        player.connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }))
+        player.connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }));
         session.leaderToken++;
     }
 }

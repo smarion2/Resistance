@@ -52,10 +52,20 @@ if ('WebSocket' in window) {
                 break;
         }
     }
-    var user = JSON.parse(localStorage.user);
-    if (user) {
-        ws.send(JSON.stringify({ messageType: 'reconnect', userInfo: user }));
-    }
+    
+    window.setTimeout(function () {
+        var storage = localStorage.user
+        if (storage) {
+            var user = JSON.parse(localStorage.user);
+            if (user) {
+                viewModel.playersLoading(false);
+                viewModel.playerName(user.name);
+                viewModel.playerRole(user.playerRole);
+                console.log(JSON.stringify(user));
+                ws.send(JSON.stringify({ messageType: 'reconnect', userInfo: user }));
+            }
+        }
+    }, 1000);
 
     ws.onclose = function () {
         // reconnect here if server dies
@@ -89,7 +99,8 @@ var gameModel = function () {
     this.joinGame = function () {
         var user = {
             sessionId: this.sessionId(),
-            name: this.playerName()
+            name: this.playerName(),
+            role: this.playerRole()
         };
         localStorage.user = JSON.stringify(user);
 

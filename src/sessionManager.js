@@ -20,6 +20,40 @@ exports.resetWhoGoesOnMission = function (sessionId) {
     }
 }
 
+exports.resetMissionSelectionVotes = function (sessionId) {
+    var session = sessions[sessionId];
+    if (session) {
+        for (var player in session.players) {
+            session.players[player].approvedMission = null;
+        }
+    }
+}
+
+exports.resetSubmittedMissionResult = function (sessionId) {
+    var session = sessions[sessionId];
+    if (session) {
+        for (var player in session.players) {
+            session.players[player].hasSubmitMissionResults = false;
+        }
+    }
+}
+
+exports.resetSelectedPlayers = function (sessionId) {
+    var session = sessions[sessionId];
+    if (session) {
+        session.selectedPlayers = null;
+    }
+}
+
+exports.resetMissionLeader = function (sessionId) {
+    var session = sessions[sessionId];
+    if (session) {
+        for (var player in session.players) {
+            session.players[player].isMissionLeader = false;
+        }
+    }
+}
+
 function createGameId() {
     return 'aaaa';
 }

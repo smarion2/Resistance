@@ -33,6 +33,9 @@ wsServer.on('request', function (request) {
         console.log('mesesage recieved ' + JSON.stringify(parsedMessage));
         if (message.type === 'utf8') {            
             switch (parsedMessage.messageType) {
+                case 'reconnect':
+                    gameManager.reconnectToGame(parsedMessage, connection);
+                    break;
                 case 'createGame':
                     gameManager.createNewGame(connection);
                     break;
