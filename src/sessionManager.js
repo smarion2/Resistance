@@ -9,6 +9,17 @@ exports.createNewSession = function (connection) {
     return sessionId;
 }
 
+exports.resetWhoGoesOnMission = function (sessionId) {
+    var session = sessions[sessionId];
+    if (session) {
+        for (var player in session.players) {
+            if (session.players[player].isOnMission) {
+                session.players[player].isOnMission = false;
+            }
+        }
+    }
+}
+
 function createGameId() {
     return 'aaaa';
 }
@@ -18,6 +29,7 @@ function createSession(server) {
     sessions[sessionId] = {
         serverConnection: server,
         players: [],
+        gameState: 'preGame',
         leaderToken: 0,
         roundNumber: 0,
         blueWins: 0,

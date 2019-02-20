@@ -13,13 +13,16 @@ if ('WebSocket' in window) {
             console.log(i);
         }
         switch (parsedMessage.messageType) {
+            case 'reconnect':
+                viewModel.playersLoading(false);
+                break;
             case 'createGame':
                 console.log(parsedMessage.sessionId);
                 viewModel.sessionId(parsedMessage.sessionId);
                 break;
             case 'startGame':
                 console.log('starting game you are ' + parsedMessage.role);
-                viewModel.playersLoading(false);                
+                viewModel.playersLoading(false);
                 viewModel.playerRole(parsedMessage.role);
                 viewModel.playerList(parsedMessage.players);
                 break;
@@ -40,8 +43,22 @@ if ('WebSocket' in window) {
                 break;
             case 'missionResults':
                 console.log('does blue win? ' + parsedMessage.blueWins);
+                console.log('total pass cards ' + parsedMessage.blueCount);
+                console.log('total fail cards ' + parsedMessage.redCount);
+                break;
+            case 'winner':
+                console.log('we have a winner was blue successful? ' + parsedMessage.blueWins);
+                localStorage.removeItem('user');
                 break;
         }
+    }
+    var user = JSON.parse(localStorage.user);
+    if (user) {
+        ws.send(JSON.stringify({ messageType: 'reconnect', userInfo: user }));
+    }
+
+    ws.onclose = function () {
+        // reconnect here if server dies
     }
 } else {
     alert('Websockets are not supported in this browser please use something not terrible');
@@ -70,6 +87,12 @@ var gameModel = function () {
     };
 
     this.joinGame = function () {
+        var user = {
+            sessionId: this.sessionId(),
+            name: this.playerName()
+        };
+        localStorage.user = JSON.stringify(user);
+
         ws.send(JSON.stringify({
             messageType: 'joinGame',
             sessionId: this.sessionId(),

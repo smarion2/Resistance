@@ -22,16 +22,17 @@ exports.startGame = function (sessionId) {
         var players = getPlayerNames(session.players);
         for (var player in session.players) {
             console.log('Roles have been assigned, time to start the game');
+            session.gameState = 'gameStarted';
             session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'startGame', role: session.players[player].role, players: players }));
         }
     }
 };
 
-exports.assignMissionLeader = function(sessionId) {
+exports.assignMissionLeader = function (sessionId) {
     assignMissionLeader(sessionId);
 };
 
-exports.submitMissionSelection = function(message) {
+exports.submitMissionSelection = function (message) {
     var session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
         console.log('Misison has been selected, sending out to players for approval');
@@ -41,7 +42,7 @@ exports.submitMissionSelection = function(message) {
                 if (message.selectedPlayers[i] === session.players[player].name) {
                     console.log(session.players[player].name + ' has been registered to go on a mission');
                     session.players[player].isOnMission = true;
-                    break;          
+                    break;
                 }
             }
             session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'approveMission', selectedPlayers: message.selectedPlayers }));
@@ -49,17 +50,17 @@ exports.submitMissionSelection = function(message) {
     }
 };
 
-exports.registerVote = function(message) {
+exports.registerVote = function (message) {
     var session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
         session.missionVotes++;
-        console.log('Vote has been submitted. Total mission votes recived so far ' + session.missionVotes);         
+        console.log('Vote has been submitted. Total mission votes recived so far ' + session.missionVotes);
         for (var player in session.players) {
             if (session.players[player].name === message.name) {
                 session.players[player].approvedMission = message.approvedMission;
                 break;
             }
-        }        
+        }
         if (session.missionVotes === session.players.length) {
             var results = [];
             var totalSuccess = 0;
@@ -78,6 +79,7 @@ exports.registerVote = function(message) {
             if (totalSuccess <= (session.players.length / 2)) {
                 // TO DO keep track faile vote rounds blue auto fails at 5 in a row.
                 console.log('Mission did not recieve enough votes. Assigning new leader');
+                sessionManager.resetWhoGoesOnMission(message.sessionId);
                 assignMissionLeader(message.sessionId);
             } else {
                 console.log('Mission passed');
@@ -87,12 +89,13 @@ exports.registerVote = function(message) {
                         session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'runMission' }));
                     }
                 }
+                sessionManager.resetWhoGoesOnMission(message.sessionId);
             }
         }
     }
 }
 
-exports.registerResult = function(message) {
+exports.registerResult = function (message) {
     var session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
         session.missionResults++;
@@ -116,23 +119,30 @@ exports.registerResult = function(message) {
                     session.redWins += 1;
                 }
             }
-            session.serverConnection.sendUTF(JSON.stringify({ messageType: 'missionResults', blueWins: blueWins, blueCount: session.missionPasses, redCount: session.missionFails}));
+            session.serverConnection.sendUTF(JSON.stringify({ messageType: 'missionResults', blueWins: blueWins, blueCount: session.missionPasses, redCount: session.missionFails }));
             if (session.blueWins === 3 || session.redWins === 3) {
                 session.serverConnection.sendUTF(JSON.stringify({ messageType: 'winner', blueWins: (session.blueWins === 3) }));
             } else {
                 assignMissionLeader(message.sessionId);
             }
+            session.missionResults = 0;
+            session.missionPasses = 0;
+            session.missionFails = 0;
         }
     }
 };
 
+
 function assignMissionLeader(sessionId) {
     var session = sessionManager.getSessionBySessionId(sessionId);
     if (session) {
+        session.gameState = 'missionLeaderAssigned';
         session.leaderToken = session.leaderToken % session.players.length;
         console.log('Leader token is at position ' + session.leaderToken);
         var numberOfMissionMembers = getMissionMembers(session.players.length, session.roundNumber);
-        session.players[session.leaderToken].connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }));
+        var player = session.players[session.leaderToken];
+        player.isMissionLeader = true;
+        player.connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }))
         session.leaderToken++;
     }
 }
@@ -141,7 +151,7 @@ function assignPlayerRoles(players) {
     var roleChart = {
         5: [3, 2],
         6: [4, 2],
-        7: [4, 3],        
+        7: [4, 3],
         8: [5, 3],
         9: [6, 3],
         10: [6, 4]
