@@ -37,23 +37,25 @@ exports.reconnectToGame = function (message, connection) {
                     case 'missionLeaderAssigned':
                         if (session.players[player].isMissionLeader) {
                             var numberOfMissionMembers = getMissionMembers(session.players.length, session.roundNumber);                            
-                            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }))
+                            connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }))
                         }
                         break;
                     case 'missionSubmitted':
                         if (session.players[player].approvedMission === null) {
-                            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'approveMission', selectedPlayers: session.selectedPlayers }));
+                            connection.sendUTF(JSON.stringify({ messageType: 'approveMission', selectedPlayers: session.selectedPlayers }));
                         }
                         break;
                     case 'missionStarted':
                         if (session.players[player].isOnMission && !session.players[player].hasSubmitMissionResults) {
-                            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'runMission' }));
+                            connection.sendUTF(JSON.stringify({ messageType: 'runMission' }));
                         }
                         break;  
                 }
             }
             break;
         }
+    } else {
+        connection.sendUTF(JSON.stringify({ messageType: 'gameOver' }));
     }
 }
 

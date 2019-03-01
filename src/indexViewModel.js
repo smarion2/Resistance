@@ -50,6 +50,15 @@ if ('WebSocket' in window) {
                 console.log('we have a winner was blue successful? ' + parsedMessage.blueWins);
                 localStorage.removeItem('user');
                 break;
+            case 'gameOver':
+                localStorage.removeItem('user');
+                viewModel.playersLoading = ko.observable(true);
+                viewModel.isSelectingMission = ko.observable(false);
+                viewModel.numberGoingOnMission = ko.observable();
+                viewModel.isApprovingMission = ko.observable(false);
+                viewModel.missionVotesRecieved = ko.observable(false);
+                viewModel.isRunningMission = ko.observable(false);
+                break;
         }
     }
     
