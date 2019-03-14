@@ -20,9 +20,25 @@ exports.startGame = function (sessionId) {
     if (session) {
         assignPlayerRoles(session.players);
         var players = getPlayerNames(session.players);
+        var otherSpies = [];
         for (var player in session.players) {
-            console.log('Roles have been assigned, time to start the game');            
-            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'startGame', role: session.players[player].role, players: players }));
+            if (session.players[player].role === 'red') {
+                otherSpies.push(session.players[player].name);
+            } 
+        }
+        console.log('otherSpies: ' + JSON.stringify(otherSpies));
+        for (var player in session.players) {
+            console.log('Roles have been assigned, time to start the game');
+            var message = { 
+                messageType: 'startGame',
+                role: session.players[player].role,
+                players: players                
+            };
+            if (session.players[player].role === 'red') {
+                message.otherSpies = otherSpies;
+            }
+            console.log('MESSAGE: ' + JSON.stringify(message));
+            session.players[player].connection.sendUTF(JSON.stringify(message));
         }
     }
 };
@@ -37,23 +53,25 @@ exports.reconnectToGame = function (message, connection) {
                     case 'missionLeaderAssigned':
                         if (session.players[player].isMissionLeader) {
                             var numberOfMissionMembers = getMissionMembers(session.players.length, session.roundNumber);                            
-                            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }))
+                            connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }))
                         }
                         break;
                     case 'missionSubmitted':
                         if (session.players[player].approvedMission === null) {
-                            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'approveMission', selectedPlayers: session.selectedPlayers }));
+                            connection.sendUTF(JSON.stringify({ messageType: 'approveMission', selectedPlayers: session.selectedPlayers }));
                         }
                         break;
                     case 'missionStarted':
                         if (session.players[player].isOnMission && !session.players[player].hasSubmitMissionResults) {
-                            session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'runMission' }));
+                            connection.sendUTF(JSON.stringify({ messageType: 'runMission' }));
                         }
                         break;  
                 }
             }
             break;
         }
+    } else {
+        connection.sendUTF(JSON.stringify({ messageType: 'gameOver' }));
     }
 }
 
@@ -214,6 +232,11 @@ function assignPlayerRoles(players) {
         players[playerIndex].role = 'red';
         console.log('Player ' + players[playerIndex].name + ' is red');
         playerIndex++;
+    }
+    // lazy for now
+    for (let i = players.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [players[i], players[j]] = [players[j], players[i]];
     }
 }
 

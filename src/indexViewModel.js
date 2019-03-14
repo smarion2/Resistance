@@ -25,6 +25,7 @@ if ('WebSocket' in window) {
                 viewModel.playersLoading(false);
                 viewModel.playerRole(parsedMessage.role);
                 viewModel.playerList(parsedMessage.players);
+                viewModel.otherSpies(parsedMessage.otherSpies);
                 break;
             case 'selectMission':
                 viewModel.isSelectingMission(true);
@@ -47,8 +48,10 @@ if ('WebSocket' in window) {
                 console.log('total fail cards ' + parsedMessage.redCount);
                 break;
             case 'winner':
-                console.log('we have a winner was blue successful? ' + parsedMessage.blueWins);
-                localStorage.removeItem('user');
+                console.log('we have a winner was blue successful? ' + parsedMessage.blueWins);                
+                break;
+            case 'gameOver':
+                gameOver();
                 break;
         }
     }
@@ -85,6 +88,7 @@ var gameModel = function () {
     this.playerName = ko.observable('');
     this.playerRole = ko.observable('');
     this.playerList = ko.observableArray();
+    this.otherSpies = ko.observableArray();
     this.selectedPlayerList = ko.observableArray([]);
     this.missionVoteResults = ko.observableArray([]);
     this.screen = ko.observable(0);
@@ -176,3 +180,13 @@ var gameModel = function () {
 
 viewModel = new gameModel();
 ko.applyBindings(viewModel);
+
+function gameOver () {
+    localStorage.removeItem('user');
+    viewModel.playersLoading = ko.observable(true);
+    viewModel.isSelectingMission = ko.observable(false);
+    viewModel.numberGoingOnMission = ko.observable();
+    viewModel.isApprovingMission = ko.observable(false);
+    viewModel.missionVotesRecieved = ko.observable(false);
+    viewModel.isRunningMission = ko.observable(false);
+}
