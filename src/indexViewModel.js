@@ -87,6 +87,11 @@ var gameModel = function () {
     this.playerList = ko.observableArray();
     this.selectedPlayerList = ko.observableArray([]);
     this.missionVoteResults = ko.observableArray([]);
+    this.screen = ko.observable(0);
+
+    this.increment = function() {
+        this.screen(this.screen() + 1);
+    };
 
     this.hasSelectedCorrectNumberOfMembers = ko.pureComputed(function () {
         return (this.selectedPlayerList().length === Number(this.numberGoingOnMission()));
@@ -126,7 +131,7 @@ var gameModel = function () {
             sessionId: this.sessionId(),
             selectedPlayers: this.selectedPlayerList()
         }));
-    }
+    };
 
     this.approveMission = function () {
         this.isApprovingMission(false);
@@ -136,7 +141,7 @@ var gameModel = function () {
             sessionId: this.sessionId(),
             approvedMission: true
         }));
-    }
+    };
 
     this.rejectMission = function () {
         this.isApprovingMission(false);
@@ -146,7 +151,7 @@ var gameModel = function () {
             sessionId: this.sessionId(),
             approvedMission: false
         }));
-    }
+    };
 
     this.passMission = function () {
         this.isRunningMission(false);
@@ -156,7 +161,7 @@ var gameModel = function () {
             sessionId: this.sessionId(),
             passedMission: true
         }));
-    }
+    };
 
     this.failMission = function () {
         this.isRunningMission(false);
@@ -166,7 +171,7 @@ var gameModel = function () {
             sessionId: this.sessionId(),
             passedMission: false
         }));
-    }
+    };
 };
 
 viewModel = new gameModel();

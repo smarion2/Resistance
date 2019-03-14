@@ -1,191 +1,61 @@
 <!DOCTYPE html>
 <html>
-
     <head>
         <meta charset='utf-8'>
         <meta http-equiv='X-UA-Compatible' content='IE=edge'>
         <meta name='viewport' content='width=device-width, initial-scale=1'>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
-            integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-        <link rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/css/bootstrap-select.min.css">
+        <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'
+            integrity='sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T' crossorigin='anonymous'>
+        <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.2/css/all.css'
+            integrity='sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr' crossorigin='anonymous'>
+        <link rel='stylesheet'
+            href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/css/bootstrap-select.min.css'>
+        <link rel='stylesheet' href='./fancy.css'>
     </head>
-    <style>
-        /* Animations */
-        .flip {
-            -webkit-perspective: 800;
-            width: 86px;
-            height: 125px;
-            position: relative;
-            margin: 50px auto;
-            right: -300px;
-            transform: rotate(90deg);
-        }
-
-        .flip .card.flipped {
-            -webkit-transform: rotateY(180deg);
-        }
-
-        .flip .card {
-            width: 100%;
-            height: 100%;
-            -webkit-transform-style: preserve-3d;
-            -webkit-transition: 0.7s;
-        }
-
-        .flip .card .face {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            -webkit-backface-visibility: hidden;
-            z-index: 2;
-        }
-
-        .flip .card .front {
-            z-index: 1;
-            background-color: grey;
-        }
-
-        .flip .card .back {
-            background-image: url('https://i.ibb.co/jyBKnK3/red.png');
-            /* background-image: url('https://i.ibb.co/JH3VWVx/blue.png'); */
-            background-repeat: no-repeat;
-            -webkit-transform: rotateY(180deg);
-        }
-
-        .slide {
-            transition: 1s;
-            right: 0;
-            transform: rotate(0deg);
-        }
-
-        .fadeDown {
-            animation-name: fadeDown;
-            animation-duration: .5s;
-            animation-timing-function: ease-out;
-            transform-origin: 50% 0%;
-        }
-
-        @keyframes fadeDown {
-            0% {
-                transform: scaleY(0);
-            }
-
-            25% {
-                transform: scaleY(.25);
-            }
-
-            50% {
-                transform: scaleY(.5);
-            }
-
-            75% {
-                transform: scaleY(0.75);
-            }
-
-            100% {
-                transform: scaleY(1.0);
-            }
-        }
-
-        .display-hidden {
-            visibility: hidden;
-        }
-
-
-
-
-        /* general */
-        input {
-            border: 0;
-            outline: 0;
-            background: transparent;
-            border: 1px solid white;
-            border-radius: 10px;
-            padding: 8px;
-        }
-
-        .background {
-            background-image: url('https://cdn1.imggmi.com/uploads/2019/3/7/0b66e357b83fd14be23e17ac047db2f2-full.jpg');
-            background-repeat: no-repeat;
-            background-color: #330000;
-            overflow: hidden;
-        }
-
-        .approve-back {
-            background-image: url('https://imgur.com/a/dpDYxA2');
-            background-repeat: no-repeat;
-        }
-
-        .w-40 {
-            width: 40%;
-        }
-
-        .w-60 {
-            width: 50%;
-        }
-
-        .w-90 {
-            width: 90%;
-        }
-
-        .w-90::placeholder {
-            color: white;
-        }
-
-        .no-list-display {
-            list-style-type: none;
-            list-style-position: inside;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
 
     <body class='background'>
         <div class='m-1 text-white'>
             <h3 class='mt-5 mb-5 text-center' data-bind='visible: $data.playersLoading'>Welcome
                 to Resistance</h3>
-            <div class='text-center' data-bind='visible: $data.screen() === 0'>
-                <h6 class='mb-3 font-weight-light'>What would you like to do?</h6>
-                <button class='btn btn-light w-40' data-bind='click: function () { $data.screen.increment(); }'>Join
-                    game</button>
-                <button class='btn btn-light w-40' data-bind='click: $data.createGame'>Host game</button>
-            </div>
-            <div class='text-center' data-bind='visible: $data.screen() === 1'>
-                <h6 class='mb-3 font-weight-light text-center'>Enter a Username and Room Code to join</h6>
-                <input data-bind='value: $data.playerName' class='w-90 mb-2' id='playerName'
-                    placeholder='Enter a name' />
-                <input data-bind='value: $data.sessionId' class='w-90' placeholder='Enter 4-letter code' />
-                <button class='btn btn-light mt-3 w-60'
-                    data-bind='click: $data.joinGame, enable: $data.sessionId().length !== 0'>Join Game</button>
-            </div>
-
-            <div class='text-center' data-bind='visible: $data.screen() === 2'>
-                <div>
-                    <h2><span class='pb-2 badge badge-secondary' data-bind='text: $data.sessionId'></span></h2>
-                    <h5 class='mt-5 mb-3'>Players in lobby</h5>
-                    <div class='mb-5 no-list-display' data-bind='foreach: $data.playerList'>
-                        <li data-bind='text: $data'></li>
+                <div class='text-center' data-bind='visible: $data.screen() === 0'>
+                    <h6 class='mb-3 font-weight-light'>What would you like to do?</h6>
+                    <button class='btn btn-light w-40' data-bind='click: increment'>Join
+                        game</button>
+                        <button class='btn btn-light w-40' data-bind='click: $data.createGame'>Host game</button>
                     </div>
-                </div>
-                <div class=''>
-                    <h6 class='mb-3 font-weight-light'>Everybody ready?</h6>
-                    <button class='btn btn-light w-40' data-bind='click: $data.startGame'>Start</button>
-                </div>
-            </div>
-
-
-            <div class='text-center mt-5' data-bind='visible: $data.onceRolesAssigned?'>
-                <h5 class='mb-5'>You have been assigned a role</h5>
-                <h6 class='mb-3 font-weight-light'>Click on your card to show your team</h6>
-                <div id="flip" class="flip" data-bind='css: { slide: $data.roleAssigned }'>
-                    <div class="card">
-                        <div class="face front"></div>
-                        <div class="face back"></div>
+                    <div class='text-center' data-bind='visible: $data.screen() === 1'>
+                        <h6 class='mb-3 font-weight-light text-center'>Enter a Username and Room Code to join</h6>
+                        <input data-bind='value: $data.playerName' class='w-90 mb-2' id='playerName'
+                        placeholder='Enter a name' />
+                        <input data-bind='value: $data.sessionId' class='w-90' placeholder='Enter 4-letter code' />
+                        <button class='btn btn-light mt-3 w-60'
+                        data-bind='click: $data.joinGame, enable: $data.sessionId().length !== 0'>Join Game</button>
                     </div>
-                </div>
+                    <div class='text-center' data-bind='visible: $data.screen() === 2'>
+                        <div>
+                            <h2><span class='pb-2 badge badge-secondary' data-bind='text: $data.sessionId'></span></h2>
+                            <h5 class='mt-5 mb-3'>Players in lobby</h5>
+                            <div class='mb-5 no-list-display' data-bind='foreach: $data.playerList'>
+                                <li data-bind='text: $data'></li>
+                            </div>
+                        </div>
+                        <div class=''>
+                            <h6 class='mb-3 font-weight-light'>Everybody ready?</h6>
+                            <button class='btn btn-light w-40' data-bind='click: $data.startGame'>Start</button>
+                        </div>
+                    </div>
+                    
+                    <div class='text-center mt-5' data-bind='visible: $data.onceRolesAssigned'>
+                        <h5 class='mb-5'>You have been assigned a role</h5>
+                        <h6 class='mb-3 font-weight-light'>Click on your card to show your team</h6>
+                        <div id='flip' class='flip' data-bind='css: { slide: $data.roleAssigned }'>
+                            <div class='card'>
+                                <div class='face front'></div>
+                                <div class='face back'></div>
+                            </div>
+                        </div> 
+                    </div>
+                
                 <div id='spies' class='display-hidden'>
                     <div data-bind='if: $data.otherSpies'>
                         <h6 class='mb-3 font-weight-light text-center'>Here are the other spies:</h6>
@@ -197,16 +67,13 @@
                     </div>
                 </div>
             </div>
-
-
-
             <div class='text-center mt-5' data-bind='visible: $data.isSelectingMission'>
                 <h4>You are the mission leader</h4>
                 <div class='font-weight-light mt-4 mb-3'>
                     <span>You must choose <span class='font-weight-bold'
                             data-bind='text: $data.numberGoingOnMission'>3</span> players to go on the mission</span>
                 </div>
-                <select class='selectpicker form-control' multiple data-live-search="true" multiple='multiple'
+                <select class='selectpicker form-control' multiple data-live-search='true' multiple='multiple'
                     data-bind='options: $data.playerList, selectedOptions: $data.selectedPlayerList'></select>
                 <div class='mt-2'>
                     <span>Selected: </span>
@@ -216,9 +83,9 @@
                 </div>
                 <button class='btn btn-dark w-40 mt-5'
                     data-bind='click: submitMissionSelection, enable: hasSelectedCorrectNumberOfMembers'>Suggest
-                    Mission</button>
+                    Mission
+                </button>
             </div>
-
             <div class='text-center mt-5' data-bind='visible: $data.isApprovingMission'>
                 <h4>Players selected for the mission</h4>
                 <ul class='no-list-display mb-5 mt-4' style='font-size: 1.3em;' data-bind='foreach: selectedPlayerList'>
@@ -231,7 +98,6 @@
                 <img data-bind='click: approveMission'
                     src='https://cdn1.imggmi.com/uploads/2019/3/7/3c458b3eb425c0258296a4fcb06ecfe3-full.jpg'>
             </div>
-
             <div class='text-center mt-5' data-bind='visible: $data.missionVotesRecieved'>
                 <h3>Here's how the voting went:</h3>
                 <ul id='voting' class='mb-5 no-list-display' data-bind='foreach: $data.missionVoteResults'>
@@ -244,7 +110,6 @@
                 <h4 class='display-hidden' id='voting-result' class='font-weight-bold'
                     data-bind='text: $data.votingResult'>Approved</h4>
             </div>
-
             <div class='text-center mt-5' data-bind='visible: $data.isRunningMission'>
                 <h4>You have been selected for this mission!</h4>
                 <h6 class='mt-5 mb-4 font-weight-light text-center'>You must either pass or fail the mission.</h6>
@@ -255,23 +120,27 @@
                         src='https://cdn1.imggmi.com/uploads/2019/3/7/7d1094013051720acb686f00537622cd-full.jpg'>
                 </div>
             </div>
-
-            <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-                integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-                crossorigin="anonymous"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-                integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-                crossorigin="anonymous"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-                integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-                crossorigin="anonymous"></script>
+            <script src='https://code.jquery.com/jquery-3.3.1.slim.min.js'
+                integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo'
+                crossorigin='anonymous'>
+            </script>
+            <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js'
+                integrity='sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1'
+                crossorigin='anonymous'>
+            </script>
+            <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js'
+                integrity='sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM'
+                crossorigin='anonymous'>
+            </script>
+        
             <script src='https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js'></script>
             <script type='text/javascript' src='./knockout-3.4.2.js'></script>
-            <script type='text/javascript' src='./indexViewModel.js'></script>
-            <script
-                src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/js/bootstrap-select.min.js"></script>
-            <script>
-                $("#voting li").each(function (index) {
+            <script type='text/javascript' src='./indexViewModel.js'></script>        
+            <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/js/bootstrap-select.min.js'></script>
+        
+            <script> 
+                /*
+                $('#voting li').each(function (index) {
                     var item,
                         currentIndex;
                     item = $(this);
@@ -296,6 +165,7 @@
                     }
                 });
                 $('#flip').toggleClass('slide');
+               */
             </script>
         </div>
     </body>
