@@ -34,8 +34,8 @@
 }
 
 .flip .card .back {
-    background-image: url('https://i.ibb.co/jyBKnK3/red.png');
-    /* background-image: url('https://i.ibb.co/JH3VWVx/blue.png'); */
+    background-image: url('../../images/axis-1-card.jpg');
+    /* background-image: url('../../images/ally-1-card.jpg'); */
     background-repeat: no-repeat;
     -webkit-transform: rotateY(180deg);
 }
@@ -90,14 +90,14 @@ input {
 }
 
 .background {
-    background-image: url('https://cdn1.imggmi.com/uploads/2019/3/7/0b66e357b83fd14be23e17ac047db2f2-full.jpg');
+    background-image: url('../../images/city-back.jpg');
     background-repeat: no-repeat;
     background-color: #330000;
     overflow: hidden;
 }
 
 .approve-back {
-    background-image: url('https://imgur.com/a/dpDYxA2');
+    background-image: url('../../images/back-card.jpg');
     background-repeat: no-repeat;
 }
 

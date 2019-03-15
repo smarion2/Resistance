@@ -92,6 +92,7 @@ var gameModel = function () {
     this.selectedPlayerList = ko.observableArray([]);
     this.missionVoteResults = ko.observableArray([]);
     this.screen = ko.observable(0);
+    this.gameStarted = ko.observable(false);
 
     this.increment = function() {
         this.screen(this.screen() + 1);
@@ -118,6 +119,7 @@ var gameModel = function () {
             sessionId: this.sessionId(),
             name: this.playerName()
         }));
+        this.increment();
     };
 
     this.startGame = function () {
@@ -126,6 +128,7 @@ var gameModel = function () {
             messageType: 'startGame',
             sessionId: this.sessionId()
         }));
+        this.gameStarted(true);
     };
 
     this.submitMissionSelection = function () {
