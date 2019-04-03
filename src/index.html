@@ -65,10 +65,10 @@
             </div>
         </div>
         <div class='text-center mt-5' data-bind='visible: $data.isSelectingMission'>
-            <h4>You are the mission leader</h4>
+            <h4 class='pb-2 badge badge-secondary'>You are the mission leader</h4>
             <div class='font-weight-light mt-4 mb-3'>
-                <span>You must choose <span class='font-weight-bold'
-                        data-bind='text: $data.numberGoingOnMission'>3</span> players to go on the mission</span>
+                <span style='color: white'>You must choose <span style='color: white' class='font-weight-bold'
+                        data-bind='text: $data.numberGoingOnMission'></span> players to go on the mission</span>
             </div>
             <select class='selectpicker form-control' multiple data-live-search='true' multiple='multiple'
                 data-bind='options: $data.playerList, selectedOptions: $data.selectedPlayerList'></select>
@@ -84,28 +84,28 @@
             </button>
         </div>
         <div class='text-center mt-5' data-bind='visible: $data.isApprovingMission'>
-            <h4>Players selected for the mission</h4>
+            <h4 style='color: white' >Players selected for the mission</h4>
             <ul class='no-list-display mb-5 mt-4' style='font-size: 1.3em;' data-bind='foreach: selectedPlayerList'>
                 <li data-bind='text: $data'></li>
             </ul>
-            <h6 class='pt-5 mb-4 font-weight-light text-center'>Choose to support or reject the proposed mission.
+            <h6 style='color: white' class='pt-5 mb-4 font-weight-light text-center'>Choose to support or reject the proposed mission.
             </h6>
             <img data-bind='click: rejectMission' src='../../images/reject-card.jpg'>
             <img data-bind='click: approveMission' src='../../images/support-card.jpg'>
         </div>
         <div class='text-center mt-5' data-bind='visible: $data.missionVotesRecieved'>
-            <h3>Here's how the voting went:</h3>
+            <h3 style='color: white' >Here's how the voting went:</h3>
             <ul id='voting' class='mb-5 no-list-display' data-bind='foreach: $data.missionVoteResults'>
                 <li class='display-hidden pb-2'>
                     <span data-bind='text: $data.name'></span><span>:</span>
                     <b data-bind='text: $data.result'></b>
                 </li>
             </ul>
-            <h4>The vote result is:</h4>
+            <h4 style='color: white' >The vote result is:</h4>
             <h4 class='display-hidden' id='voting-result' class='font-weight-bold' data-bind='text: $data.votingResult'>
                 Approved</h4>
         </div>
-        <div class='text-center mt-5' data-bind='visible: $data.isRunningMission'>
+        <div style='color: white' class='text-center mt-5' data-bind='visible: $data.isRunningMission'>
             <h4>You have been selected for this mission!</h4>
             <h6 class='mt-5 mb-4 font-weight-light text-center'>You must either pass or fail the mission.</h6>
             <div>
