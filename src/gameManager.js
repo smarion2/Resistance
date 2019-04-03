@@ -258,4 +258,4 @@ function getPlayerNames(players) {
         list.push(players[player].name);
     }
     return list;
-}
+} 
