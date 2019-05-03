@@ -80,6 +80,7 @@ if ('WebSocket' in window) {
 
 var gameModel = function () {
     this.playersLoading = ko.observable(true);
+    this.isServer = ko.observable(false);
     this.isSelectingMission = ko.observable(false);
     this.numberGoingOnMission = ko.observable();
     this.isApprovingMission = ko.observable(false);
@@ -104,7 +105,9 @@ var gameModel = function () {
     }, this);
 
     this.createGame = function () {
+        this.isServer(true);
         ws.send(JSON.stringify({ messageType: 'createGame' }));
+        this.increment();
     };
 
     this.joinGame = function () {
