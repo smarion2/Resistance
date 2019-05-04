@@ -32,21 +32,20 @@
                 </div>
             </div>
             <div class='text-center' data-bind='visible: $data.screen() === 2 && !$data.gameStarted()'>
-                <div>
-                    <h2><span class='pb-2 badge badge-secondary' data-bind='text: $data.playerName'></span></h2>
-                    <h2 class='mt-2'>Code: <span data-bind='text: $data.sessionId'></span></h2>
+                <div data-bind='visible: $data.isServer'>
+                    <h2><span class='pb-2 badge badge-secondary' data-bind='text: $data.playerName'></span></h2>                    
                     <h5 class='mt-5 mb-3'>Players in lobby</h5>
                     <div class='mb-5 no-list-display' data-bind='foreach: $data.playerList'>
                         <li data-bind='text: $data'></li>
                     </div>
                 </div>
-                <div class=''>
+                <div data-bind='visible: !isServer()'>
                     <h6 class='mb-3 font-weight-light'>Everybody ready?</h6>
                     <button class='btn btn-light w-40' data-bind='click: $data.startGame'>Start</button>
                 </div>
             </div>
 
-            <div class='text-center mt-5' data-bind='visible: $data.onceRolesAssigned'>
+            <div class='text-center mt-5' data-bind='visible: $data.gameStarted'>
                 <h5 class='mb-5'>You have been assigned a role</h5>
                 <h6 class='mb-3 font-weight-light'>Click on your card to show your team</h6>
                 <div id='flip' class='flip' data-bind='css: { slide: $data.roleAssigned }'>
@@ -55,16 +54,15 @@
                         <div class='face back'></div>
                     </div>
                 </div>
-            </div>
-
-            <div id='spies' class='display-hidden'>
-                <div data-bind='if: $data.otherSpies'>
-                    <h6 class='mb-3 font-weight-light text-center'>Here are the other spies:</h6>
-                    <ul class='no-list-display' data-bind='foreach: $data.otherSpies'>
-                        <li>
-                            <b data-bind='text: $data'></b>
-                        </li>
-                    </ul>
+                <div id='spies' class='display-hidden'>
+                    <div data-bind='if: $data.otherSpies'>
+                        <h6 class='mb-3 font-weight-light text-center'>Here are the other spies:</h6>
+                        <ul class='no-list-display' data-bind='foreach: $data.otherSpies'>
+                            <li>
+                                <b data-bind='text: $data'></b>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -90,24 +88,30 @@
         <div class='text-center mt-5' data-bind='visible: $data.isApprovingMission'>
             <h4 style='color: white' >Players selected for the mission</h4>
             <ul class='no-list-display mb-5 mt-4' style='font-size: 1.3em;' data-bind='foreach: selectedPlayerList'>
-                <li data-bind='text: $data'></li>
+                <li style='color: white' data-bind='text: $data'></li>
             </ul>
             <h6 style='color: white' class='pt-5 mb-4 font-weight-light text-center'>Choose to support or reject the proposed mission.
             </h6>
             <img data-bind='click: rejectMission' src='../../images/reject-card.jpg'>
             <img data-bind='click: approveMission' src='../../images/support-card.jpg'>
         </div>
-        <div class='text-center mt-5' data-bind='visible: $data.missionVotesRecieved'>
-            <h3 style='color: white' >Here's how the voting went:</h3>
-            <ul id='voting' class='mb-5 no-list-display' data-bind='foreach: $data.missionVoteResults'>
-                <li class='display-hidden pb-2'>
-                    <span data-bind='text: $data.name'></span><span>:</span>
-                    <b data-bind='text: $data.result'></b>
-                </li>
-            </ul>
-            <h4 style='color: white' >The vote result is:</h4>
-            <h4 class='display-hidden' id='voting-result' class='font-weight-bold' data-bind='text: $data.votingResult'>
-                Approved</h4>
+        <div data-bind='visible: $data.isServer'>
+            <div class='gameBoard'>
+                <ul data-bind='foreach: $data.gameScore'>
+                    <li style='color: white' data-bind='text: $data'></li>
+                </ul>
+            </div>
+            <div class='text-center mt-5' data-bind='visible: $data.missionVotesRecieved'>
+                <h3 style='color: white' >Here's how the voting went:</h3>
+                <ul id='voting' style='color: white' data-bind='foreach: $data.missionVoteResults'>
+                    <li>
+                        <span data-bind='text: $data.name'></span><span>:</span>
+                        <b data-bind='text: $data.result'></b>
+                    </li>
+                </ul>
+                <h4 style='color: white' >The vote result is:</h4>
+                <span style='color: white' id='voting-result' class='font-weight-bold' data-bind='text: $data.votingResult'></span>
+            </div>
         </div>
         <div style='color: white' class='text-center mt-5' data-bind='visible: $data.isRunningMission'>
             <h4>You have been selected for this mission!</h4>
@@ -117,6 +121,8 @@
                 <img data-bind='click: passMission' src='../../images/succeed-card.jpg'>
             </div>
         </div>
+
+
         <script src='https://code.jquery.com/jquery-3.3.1.slim.min.js'
             integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous'>
             </script>
