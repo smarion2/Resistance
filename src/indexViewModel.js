@@ -47,6 +47,8 @@ if ('WebSocket' in window) {
             case 'missionResults':
                 viewModel.missionVotesRecieved(false);
                 viewModel.gameScore.push(parsedMessage.blueWins);
+                viewModel.totalBlueVotes(parsedMessage.blueCount);
+                viewModel.totalRedVotes(parsedMessage.redCount);
                 console.log('does blue win? ' + parsedMessage.blueWins);
                 console.log('total pass cards ' + parsedMessage.blueCount);
                 console.log('total fail cards ' + parsedMessage.redCount);
@@ -97,6 +99,8 @@ var gameModel = function () {
     this.selectedPlayerList = ko.observableArray([]);
     this.missionVoteResults = ko.observableArray([]);
     this.gameScore = ko.observableArray([]);
+    this.totalBlueVotes = ko.observable(0);
+    this.totalRedVotes = ko.observable(0);
     this.screen = ko.observable(0);
     this.gameStarted = ko.observable(false);
 
