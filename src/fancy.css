@@ -123,3 +123,19 @@ input {
     margin: 0;
     padding: 0;
 }
+
+/* Game Board */
+.gameBoard {
+    display: table; 
+	margin: 0 auto;
+}
+.winTracker {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;    
+}
+
+.winToken {
+    float: left
+}
