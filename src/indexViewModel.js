@@ -14,14 +14,24 @@ if ('WebSocket' in window) {
         }
         switch (parsedMessage.messageType) {
             case 'reconnect':
+                saveToStorage({playersLoading: false });
                 viewModel.playersLoading(false);
                 break;
             case 'createGame':
                 console.log(parsedMessage.sessionId);
+                saveToStorage({sessionId: parsedMessage.sessionId });
                 viewModel.sessionId(parsedMessage.sessionId);
                 break;
             case 'startGame':
                 console.log('starting game you are ' + parsedMessage.role);
+                var state = {
+                    gameStarted: true,
+                    playersLoading: false,
+                    playerRole: parsedMessage.role,
+                    playerList: parsedMessage.players,
+                    otherSpies: parsedMessage.otherSpies
+                };
+                saveToStorage(state);
                 viewModel.gameStarted(true);
                 viewModel.playersLoading(false);
                 viewModel.playerRole(parsedMessage.role);
@@ -29,22 +39,38 @@ if ('WebSocket' in window) {
                 viewModel.otherSpies(parsedMessage.otherSpies);
                 break;
             case 'selectMission':
+                var state = {
+                    isSelectingMission: true,
+                    numberGoingOnMission: Number(parsedMessage.numberToPick)
+                };
+                saveToStorage(state);
                 viewModel.isSelectingMission(true);
                 viewModel.numberGoingOnMission(Number(parsedMessage.numberToPick));
                 break;
             case 'approveMission':
+                var state = {
+                    isApprovingMission: true,
+                    selectedPlayerList: parsedMessage.selectedPlayers
+                }
+                saveToStorage(state);
                 viewModel.isApprovingMission(true);
                 viewModel.selectedPlayerList(parsedMessage.selectedPlayers);
                 break;
             case 'missionVoteResults':
+                var state = {
+                    missionVotesRecieved: true,
+                    missionVoteResults: parsedMessage.results
+                };
+                saveToStorage(state);
                 viewModel.missionVotesRecieved(true);
                 viewModel.missionVoteResults(parsedMessage.results);
                 console.log('votes recieved: ' + viewModel.missionVotesRecieved());
                 break;
             case 'runMission':
+                saveToStorage({ isRunningMission: true });
                 viewModel.isRunningMission(true);
                 break;
-            case 'missionResults':
+            case 'missionResults':                
                 viewModel.missionVotesRecieved(false);
                 viewModel.gameScore.push(parsedMessage.blueWins);
                 viewModel.totalBlueVotes(parsedMessage.blueCount);
@@ -70,7 +96,22 @@ if ('WebSocket' in window) {
                 viewModel.playersLoading(false);
                 viewModel.playerName(user.name);
                 viewModel.playerRole(user.playerRole);
-                console.log(JSON.stringify(user));
+                viewModel.sessionId(user.sessionId);
+                if (user.isServer) viewModel.isServer(user.isServer);
+                if (user.isSelectingMission) viewModel.isSelectingMission(user.isSelectingMission);
+                if (user.numberGoingOnMission) viewModel.numberGoingOnMission(user.numberGoingOnMission);
+                if (user.isApprovingMission) viewModel.isApprovingMission(user.isApprovingMission);
+                if (user.missionVotesRecieved) viewModel.missionVotesRecieved(user.missionVotesRecieved);
+                if (user.isRunningMission) viewModel.isRunningMission(user.isRunningMission);
+                if (user.otherSpies) viewModel.otherSpies(user.otherSpies);
+                if (user.selectedPlayerList) viewModel.selectedPlayerList(user.selectedPlayerList);
+                if (user.missionVoteResults) viewModel.missionVoteResults(user.missionVoteResults);
+                if (user.gameScore) viewModel.gameScore(user.gameScore);
+                if (user.totalBlueVotes) viewModel.totalBlueVotes(user.totalBlueVotes);
+                if (user.totalRedVotes) viewModel.totalRedVotes(user.totalRedVotes);
+                if (user.screen) viewModel.screen(user.screen);
+                if (user.gameStarted) viewModel.gameStarted(user.gameStarted);
+
                 ws.send(JSON.stringify({ messageType: 'reconnect', userInfo: user }));
             }
         }
@@ -204,4 +245,15 @@ function gameOver () {
     viewModel.isApprovingMission = ko.observable(false);
     viewModel.missionVotesRecieved = ko.observable(false);
     viewModel.isRunningMission = ko.observable(false);
+}
+
+function saveToStorage(item) {
+    var storage = localStorage.user
+    if (storage) {
+        var user = JSON.parse(localStorage.user);
+        user = {...user, ...item};    
+        localStorage.user = JSON.stringify(user);
+    } else {
+        localStorage.user = JSON.stringify(item);
+    }
 }
