@@ -188,10 +188,10 @@ function sendPlayerListAndRoleToPlayer(sessionId, playerIndex) {
         console.log('Roles have been assigned, time to start the game');
         var message = { 
             messageType: 'startGame',
-            role: session.players[player].role,
+            role: session.players[playerIndex].role,
             players: players                
         };
-        if (session.players[player].role === 'red') {
+        if (session.players[playerIndex].role === 'red') {
             message.otherSpies = otherSpies;
         }
 
