@@ -122,7 +122,6 @@ exports.registerVote = function (message) {
                         session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'runMission' }));
                     }
                 }
-                sessionManager.resetWhoGoesOnMission(message.sessionId);
             }
         }
     }
