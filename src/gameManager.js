@@ -40,7 +40,7 @@ exports.reconnectToGame = function (message, connection) {
                         }
                         break;
                     case 'missionSubmitted':
-                        if (session.players[player].approvedMission === null) {
+                        if (typeof(session.players[player].approvedMission) === 'undefined') {
                             connection.sendUTF(JSON.stringify({ messageType: 'approveMission', selectedPlayers: session.selectedPlayers }));
                         }
                         break;
