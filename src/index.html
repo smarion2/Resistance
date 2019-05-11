@@ -13,13 +13,13 @@
         <div class='m-1 text-white'>
             <h3 class='mt-5 mb-5 text-center' data-bind='visible: $data.playersLoading'>Welcome
                 to Resistance</h3>
-            <div class='text-center'>
+            <div class='text-center' data-bind='visible: $data.screen() === 0'>
                 <h6 class='mb-3 font-weight-light'>What would you like to do?</h6>
                 <button class='btn btn-light w-40' data-bind='click: $data.increment'>Join
                     game</button>
                 <button class='btn btn-light w-40' data-bind='click: $data.createGame'>Host game</button>
             </div>
-            <div class='text-center'>
+            <div class='text-center' data-bind='visible: $data.screen() === 1'>
                 <div data-bind='visible: $data.isServer'>
                     Game code: <span data-bind="text: $data.sessionId"></span>
                 </div>
@@ -31,7 +31,7 @@
                     <button class='btn btn-light mt-3 w-60' data-bind='click: $data.joinGame'>Join Game</button>
                 </div>
             </div>
-            <div class='text-center' data-bind='visible: !$data.gameStarted()'>
+            <div class='text-center' data-bind='visible: $data.screen() === 2 && !$data.gameStarted()'>
                 <div data-bind='visible: $data.isServer'>
                     <h2><span class='pb-2 badge badge-secondary' data-bind='text: $data.playerName'></span></h2>                    
                     <h5 class='mt-5 mb-3'>Players in lobby</h5>
@@ -97,8 +97,8 @@
         </div>
         <div data-bind='visible: $data.isServer'>
             <div class='gameBoard'>
-                <span style='color: white'>Total pass votes: </span><span style='color: white' data-bind='text: $data.totalBlueVotes'></span>
-                <span style='color: white'>Total fail votes: </span><span style='color: white' data-bind='text: $data.totalRedVotes'></span>
+                <span data-bind='text: $data.totalBlueVotes'></span>
+                <span data-bind='text: $data.totalRedVotes'></span>
                 <ul class='winTracker' data-bind='foreach: $data.gameScore'>
                     <!-- ko if: $data -->
                     <li class='winToken'><img src="../images/winToken.png"></li>
