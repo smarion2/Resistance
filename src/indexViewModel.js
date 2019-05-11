@@ -19,6 +19,7 @@ if ('WebSocket' in window) {
                 break;
             case 'startGame':
                 console.log('starting game you are ' + parsedMessage.role);
+                viewModel.gameStarted(true);
                 viewModel.playersLoading(false);
                 viewModel.playerRole(parsedMessage.role);
                 viewModel.playerList(parsedMessage.players);
@@ -35,11 +36,16 @@ if ('WebSocket' in window) {
             case 'missionVoteResults':
                 viewModel.missionVotesRecieved(true);
                 viewModel.missionVoteResults(parsedMessage.results);
+                console.log('votes recieved: ' + viewModel.missionVotesRecieved());
                 break;
             case 'runMission':
                 viewModel.isRunningMission(true);
                 break;
             case 'missionResults':
+                viewModel.missionVotesRecieved(false);
+                viewModel.gameScore.push(parsedMessage.blueWins);
+                viewModel.totalBlueVotes(parsedMessage.blueCount);
+                viewModel.totalRedVotes(parsedMessage.redCount);
                 console.log('does blue win? ' + parsedMessage.blueWins);
                 console.log('total pass cards ' + parsedMessage.blueCount);
                 console.log('total fail cards ' + parsedMessage.redCount);
@@ -78,6 +84,7 @@ if ('WebSocket' in window) {
 
 var gameModel = function () {
     this.playersLoading = ko.observable(true);
+    this.isServer = ko.observable(false);
     this.isSelectingMission = ko.observable(false);
     this.numberGoingOnMission = ko.observable();
     this.isApprovingMission = ko.observable(false);
@@ -90,13 +97,24 @@ var gameModel = function () {
     this.otherSpies = ko.observableArray();
     this.selectedPlayerList = ko.observableArray([]);
     this.missionVoteResults = ko.observableArray([]);
+    this.gameScore = ko.observableArray([]);
+    this.totalBlueVotes = ko.observable(0);
+    this.totalRedVotes = ko.observable(0);
+    this.screen = ko.observable(0);
+    this.gameStarted = ko.observable(false);
+
+    this.increment = function() {
+        this.screen(this.screen() + 1);
+    };
 
     this.hasSelectedCorrectNumberOfMembers = ko.pureComputed(function () {
         return (this.selectedPlayerList().length === Number(this.numberGoingOnMission()));
     }, this);
 
     this.createGame = function () {
+        this.isServer(true);
         ws.send(JSON.stringify({ messageType: 'createGame' }));
+        this.increment();
     };
 
     this.joinGame = function () {
@@ -112,6 +130,7 @@ var gameModel = function () {
             sessionId: this.sessionId(),
             name: this.playerName()
         }));
+        this.increment();
     };
 
     this.startGame = function () {
@@ -120,6 +139,7 @@ var gameModel = function () {
             messageType: 'startGame',
             sessionId: this.sessionId()
         }));
+        this.gameStarted(true);
     };
 
     this.submitMissionSelection = function () {
@@ -129,7 +149,7 @@ var gameModel = function () {
             sessionId: this.sessionId(),
             selectedPlayers: this.selectedPlayerList()
         }));
-    }
+    };
 
     this.approveMission = function () {
         this.isApprovingMission(false);
@@ -139,7 +159,7 @@ var gameModel = function () {
             sessionId: this.sessionId(),
             approvedMission: true
         }));
-    }
+    };
 
     this.rejectMission = function () {
         this.isApprovingMission(false);
@@ -149,7 +169,7 @@ var gameModel = function () {
             sessionId: this.sessionId(),
             approvedMission: false
         }));
-    }
+    };
 
     this.passMission = function () {
         this.isRunningMission(false);
@@ -159,7 +179,7 @@ var gameModel = function () {
             sessionId: this.sessionId(),
             passedMission: true
         }));
-    }
+    };
 
     this.failMission = function () {
         this.isRunningMission(false);
@@ -169,7 +189,7 @@ var gameModel = function () {
             sessionId: this.sessionId(),
             passedMission: false
         }));
-    }
+    };
 };
 
 viewModel = new gameModel();
