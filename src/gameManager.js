@@ -50,8 +50,8 @@ exports.reconnectToGame = function (message, connection) {
                         }
                         break;  
                 }
+                break;
             }
-            break;
         }
     } else {
         connection.sendUTF(JSON.stringify({ messageType: 'gameOver' }));
