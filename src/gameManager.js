@@ -17,28 +17,10 @@ exports.joinGame = function (message, connection) {
 
 exports.startGame = function (sessionId) {
     var session = sessionManager.getSessionBySessionId(sessionId);
-    if (session) {
+    if (session) {        
         assignPlayerRoles(session.players);
-        var players = getPlayerNames(session.players);
-        var otherSpies = [];
         for (var player in session.players) {
-            if (session.players[player].role === 'red') {
-                otherSpies.push(session.players[player].name);
-            } 
-        }
-        console.log('otherSpies: ' + JSON.stringify(otherSpies));
-        for (var player in session.players) {
-            console.log('Roles have been assigned, time to start the game');
-            var message = { 
-                messageType: 'startGame',
-                role: session.players[player].role,
-                players: players                
-            };
-            if (session.players[player].role === 'red') {
-                message.otherSpies = otherSpies;
-            }
-            console.log('MESSAGE: ' + JSON.stringify(message));
-            session.players[player].connection.sendUTF(JSON.stringify(message));
+            sendPlayerListAndRoleToPlayer(sessionId, player);
         }
     }
 };
@@ -49,6 +31,7 @@ exports.reconnectToGame = function (message, connection) {
         for (var player in session.players) {
             if (session.players[player].name === message.name) {
                 session.players[player].connection = connection;
+                sendPlayerListAndRoleToPlayer(message.sessionId, player);
                 switch (session.gameState) {
                     case 'missionLeaderAssigned':
                         if (session.players[player].isMissionLeader) {
@@ -190,6 +173,32 @@ exports.registerResult = function (message) {
         }
     }
 };
+
+function sendPlayerListAndRoleToPlayer(sessionId, playerIndex) {
+    var session = sessionManager.getSessionBySessionId(sessionId);
+    if (session) {        
+        var players = getPlayerNames(session.players);        
+        var otherSpies = [];
+        for (var player in session.players) {
+            if (session.players[player].role === 'red' && player !== playerIndex) {
+                otherSpies.push(session.players[player].name);
+            } 
+        }
+        console.log('otherSpies: ' + JSON.stringify(otherSpies));        
+        console.log('Roles have been assigned, time to start the game');
+        var message = { 
+            messageType: 'startGame',
+            role: session.players[player].role,
+            players: players                
+        };
+        if (session.players[player].role === 'red') {
+            message.otherSpies = otherSpies;
+        }
+
+        console.log('MESSAGE: ' + JSON.stringify(message));
+        session.players[playerIndex].connection.sendUTF(JSON.stringify(message));        
+    }
+}
 
 
 function assignMissionLeader(sessionId) {

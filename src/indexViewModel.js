@@ -13,9 +13,6 @@ if ('WebSocket' in window) {
             console.log(i);
         }
         switch (parsedMessage.messageType) {
-            case 'reconnect':
-                viewModel.playersLoading(false);
-                break;
             case 'createGame':
                 console.log(parsedMessage.sessionId);
                 viewModel.sessionId(parsedMessage.sessionId);
@@ -63,10 +60,12 @@ if ('WebSocket' in window) {
             if (user) {
                 viewModel.playersLoading(false);
                 viewModel.playerName(user.name);
-                viewModel.playerRole(user.playerRole);
+                viewModel.sessionId(user.sessionId);        
+                viewModel.screen(2);
+                viewModel.gameStarted(true);
                 console.log(JSON.stringify(user));
                 ws.send(JSON.stringify({ messageType: 'reconnect', userInfo: user }));
-            }
+            }            
         }
     }, 1000);
 
@@ -178,10 +177,13 @@ ko.applyBindings(viewModel);
 
 function gameOver () {
     localStorage.removeItem('user');
-    viewModel.playersLoading = ko.observable(true);
-    viewModel.isSelectingMission = ko.observable(false);
-    viewModel.numberGoingOnMission = ko.observable();
-    viewModel.isApprovingMission = ko.observable(false);
-    viewModel.missionVotesRecieved = ko.observable(false);
-    viewModel.isRunningMission = ko.observable(false);
+    viewModel.screen(0);
+    viewModel.gameStarted(false);
+    viewModel.otherSpies();
+    viewModel.playersLoading(true);
+    viewModel.isSelectingMission(false);
+    viewModel.numberGoingOnMission(0);
+    viewModel.isApprovingMission(false);
+    viewModel.missionVotesRecieved(false);
+    viewModel.isRunningMission(false);
 }
