@@ -9,8 +9,13 @@ exports.createNewGame = function (connection) {
 exports.joinGame = function (message, connection) {
     var session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
-        session.players.push({ name: message.name, connection: connection });
-        console.log('Player joined session:' + message.sessionId + ' Total player count: ' + session.players.length);
+        if (session.players.length < 10) {
+            session.players.push({ name: message.name, connection: connection });
+            console.log('Player joined session:' + message.sessionId + ' Total player count: ' + session.players.length);
+        } else {
+            console.log('Player unable to join session. Session full');            
+            connection.sendUTF(JSON.stringify({messageType: 'error', error: 'Cannot join session. Session is full' }));
+        }
         // broadcast players to everyone?
     }
 };

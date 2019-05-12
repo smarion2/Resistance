@@ -13,6 +13,8 @@ if ('WebSocket' in window) {
             console.log(i);
         }
         switch (parsedMessage.messageType) {
+            case 'error':
+                window.alert(parsedMessage.error);
             case 'createGame':
                 console.log(parsedMessage.sessionId);
                 viewModel.sessionId(parsedMessage.sessionId);
