@@ -22,10 +22,12 @@ exports.joinGame = function (message, connection) {
 
 exports.startGame = function (sessionId) {
     var session = sessionManager.getSessionBySessionId(sessionId);
-    if (session) {        
-        assignPlayerRoles(session.players);
-        for (var player in session.players) {
-            sendPlayerListAndRoleToPlayer(sessionId, player);
+    if (session) {
+        if (session.players.length >= 5 && session.players.length <= 10) {
+            assignPlayerRoles(session.players);
+            for (var player in session.players) {
+                sendPlayerListAndRoleToPlayer(sessionId, player);
+            }
         }
     }
 };

@@ -148,7 +148,6 @@ var gameModel = function () {
             messageType: 'startGame',
             sessionId: this.sessionId()
         }));
-        this.gameStarted(true);
     };
 
     this.submitMissionSelection = function () {
