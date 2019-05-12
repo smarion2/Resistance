@@ -108,14 +108,16 @@ exports.registerVote = function (message) {
                 });
                 session.players[player].approvedMission = message.approvedMission;
             }
-            session.serverConnection.sendUTF(JSON.stringify({ messageType: 'missionVoteResults', results: results }));
+            var result;
             if (totalSuccess <= (session.players.length / 2)) {
                 // TO DO keep track faile vote rounds blue auto fails at 5 in a row.
                 console.log('Mission did not recieve enough votes. Assigning new leader');
+                result = 'Failed';
                 sessionManager.resetWhoGoesOnMission(message.sessionId);
                 assignMissionLeader(message.sessionId);
             } else {
                 console.log('Mission passed');
+                result = 'Passed';
                 for (var player in session.players) {
                     if (session.players[player].isOnMission) {
                         console.log(session.players[player].name + ' is being sent on the mission');
@@ -123,6 +125,7 @@ exports.registerVote = function (message) {
                     }
                 }
             }
+            session.serverConnection.sendUTF(JSON.stringify({ messageType: 'missionVoteResults', results: results, result: result }));
         }
     }
 }

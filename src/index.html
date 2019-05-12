@@ -97,8 +97,8 @@
         </div>
         <div data-bind='visible: $data.isServer'>
             <div class='gameBoard'>
-                <span data-bind='text: $data.totalBlueVotes'></span>
-                <span data-bind='text: $data.totalRedVotes'></span>
+                <span style='color: white'>Pass votes: </span><span style='color: white' data-bind='text: $data.totalBlueVotes'></span>
+                <span style='color: white'>Fail votes: </span><span style='color: white' data-bind='text: $data.totalRedVotes'></span>
                 <ul class='winTracker' data-bind='foreach: $data.gameScore'>
                     <!-- ko if: $data -->
                     <li class='winToken'><img src="../images/winToken.png"></li>

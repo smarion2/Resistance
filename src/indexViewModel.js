@@ -36,6 +36,7 @@ if ('WebSocket' in window) {
             case 'missionVoteResults':
                 viewModel.missionVotesRecieved(true);
                 viewModel.missionVoteResults(parsedMessage.results);
+                viewModel.votingResult(parsedMessage.result);
                 console.log('votes recieved: ' + viewModel.missionVotesRecieved());
                 break;
             case 'runMission':
@@ -97,6 +98,7 @@ var gameModel = function () {
     this.otherSpies = ko.observableArray();
     this.selectedPlayerList = ko.observableArray([]);
     this.missionVoteResults = ko.observableArray([]);
+    this.votingResult = ko.observable();
     this.gameScore = ko.observableArray([]);
     this.totalBlueVotes = ko.observable(0);
     this.totalRedVotes = ko.observable(0);
