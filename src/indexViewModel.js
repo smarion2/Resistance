@@ -108,7 +108,12 @@ var gameModel = function () {
     };
 
     this.hasSelectedCorrectNumberOfMembers = ko.pureComputed(function () {
-        return (this.selectedPlayerList().length === Number(this.numberGoingOnMission()));
+        return this.selectedPlayerList().length === Number(this.numberGoingOnMission());
+    }, this);
+
+    this.roleCard = ko.pureComputed(function () {
+        var faceCss = 'face back';
+        return this.playerRole() === 'blue' ? faceCss + ' resistance' : faceCss + ' spy';
     }, this);
 
     this.createGame = function () {

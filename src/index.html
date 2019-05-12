@@ -51,7 +51,7 @@
                 <div id='flip' class='flip' data-bind='css: { slide: $data.roleAssigned }'>
                     <div class='card'>
                         <div class='face front'></div>
-                        <div class='face back'></div>
+                        <div data-bind='css: $data.roleCard'></div>
                     </div>
                 </div>
                 <div id='spies' class='display-hidden'>

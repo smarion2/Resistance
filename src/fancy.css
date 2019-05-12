@@ -33,11 +33,17 @@
     background-color: grey;
 }
 
-.flip .card .back {
-    background-image: url('../../images/axis-1-card.jpg');
-    /* background-image: url('../../images/ally-1-card.jpg'); */
+.flip .card .back {    
     background-repeat: no-repeat;
     -webkit-transform: rotateY(180deg);
+}
+
+.spy {
+    background-image: url('../../images/axis-1-card.jpg');
+}
+
+.resistance {
+    background-image: url('../../images/ally-1-card.jpg');     
 }
 
 .slide {
