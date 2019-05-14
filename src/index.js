@@ -30,7 +30,7 @@ wsServer.on('request', function (request) {
     console.log(new Date() + ' Connection accepted.');
     connection.on('message', function (message) {
         var parsedMessage = JSON.parse(message.utf8Data);
-        console.log('mesesage recieved ' + JSON.stringify(parsedMessage));
+        console.log(new Date() + ' Mesesage recieved: ' + JSON.stringify(parsedMessage));
         if (message.type === 'utf8') {            
             switch (parsedMessage.messageType) {
                 case 'reconnect':
@@ -59,7 +59,7 @@ wsServer.on('request', function (request) {
             }
         }
         else {
-            console.log(message.type);
+            console.log(new Date() + " Wtf is this: " + message.type);
         }
     });
 });
