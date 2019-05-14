@@ -3,7 +3,8 @@ var ws;
 
 if ('WebSocket' in window) {
     if (ws == null) {
-        ws = new WebSocket('ws:localhost:1337', 'echo-protocol');
+        var ip = window.hostname;
+        ws = new WebSocket('ws:' + ip + ':1337', 'echo-protocol');
     }
 
     ws.onmessage = function (message) {
