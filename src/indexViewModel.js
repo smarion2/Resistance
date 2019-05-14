@@ -3,7 +3,7 @@ var ws;
 
 if ('WebSocket' in window) {
     if (ws == null) {
-        var ip = window.hostname;
+        var ip = window.location.hostname;
         ws = new WebSocket('ws:' + ip + ':1337', 'echo-protocol');
     }
 
