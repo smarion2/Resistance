@@ -12,7 +12,8 @@ exports.joinGame = function (message, connection) {
         if (session.players.length < 10) {
             var playerSession = generateId(10);
             session.players.push({ name: message.name, connection: connection, playerSession: playerSession });
-            console.log('Player joined session:' + message.sessionId + ' Total player count: ' + session.players.length);
+            connection.sendUTF(JSON.stringify({messageType: 'joinedGame', playerSession: playerSession }));
+            console.log('Player joined session:' + message.sessionId + ' Total player count: ' + session.players.length);            
         } else {
             console.log('Player unable to join session. Session full');            
             connection.sendUTF(JSON.stringify({messageType: 'error', error: 'Cannot join session. Session is full' }));

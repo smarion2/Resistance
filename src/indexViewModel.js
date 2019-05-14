@@ -25,6 +25,7 @@ if ('WebSocket' in window) {
                     playerSession: parsedMessage.playerSession
                 };
                 localStorage.user = JSON.stringify(user);
+                break;
             case 'createGame':
                 console.log(parsedMessage.sessionId);
                 viewModel.sessionId(parsedMessage.sessionId);
