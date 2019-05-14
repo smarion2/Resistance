@@ -10,7 +10,8 @@ exports.joinGame = function (message, connection) {
     var session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
         if (session.players.length < 10) {
-            session.players.push({ name: message.name, connection: connection });
+            var playerSession = generateId(10);
+            session.players.push({ name: message.name, connection: connection, playerSession: playerSession });
             console.log('Player joined session:' + message.sessionId + ' Total player count: ' + session.players.length);
         } else {
             console.log('Player unable to join session. Session full');            
@@ -36,7 +37,7 @@ exports.reconnectToGame = function (message, connection) {
     var session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
         for (var player in session.players) {
-            if (session.players[player].name === message.name) {
+            if (session.players[player].playerSession === message.playerSession) {
                 session.players[player].connection = connection;
                 sendPlayerListAndRoleToPlayer(message.sessionId, player);
                 switch (session.gameState) {
@@ -277,3 +278,13 @@ function getPlayerNames(players) {
     }
     return list;
 } 
+
+function generateId(length) {
+    var result = '';
+    var characters  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+ }

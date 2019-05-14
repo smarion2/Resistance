@@ -15,6 +15,15 @@ if ('WebSocket' in window) {
         switch (parsedMessage.messageType) {
             case 'error':
                 window.alert(parsedMessage.error);
+            case 'joinedGame':
+                viewModel.playerSession = parsedMessage.playerSession;
+                var user = {
+                    sessionId: viewModel.sessionId(),
+                    name: viewModel.playerName(),
+                    role: viewModel.playerRole(),
+                    playerSession: parsedMessage.playerSession
+                };
+                localStorage.user = JSON.stringify(user);
             case 'createGame':
                 console.log(parsedMessage.sessionId);
                 viewModel.sessionId(parsedMessage.sessionId);
@@ -86,6 +95,7 @@ if ('WebSocket' in window) {
 }
 
 var gameModel = function () {
+    this.playerSession = '';
     this.playersLoading = ko.observable(true);
     this.isServer = ko.observable(false);
     this.isSelectingMission = ko.observable(false);
@@ -127,13 +137,6 @@ var gameModel = function () {
     };
 
     this.joinGame = function () {
-        var user = {
-            sessionId: this.sessionId(),
-            name: this.playerName(),
-            role: this.playerRole()
-        };
-        localStorage.user = JSON.stringify(user);
-
         ws.send(JSON.stringify({
             messageType: 'joinGame',
             sessionId: this.sessionId(),
