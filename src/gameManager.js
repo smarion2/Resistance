@@ -29,6 +29,7 @@ exports.startGame = function (sessionId) {
         for (var player in session.players) {
             sendPlayerListAndRoleToPlayer(sessionId, player);
         }    
+        assignMissionLeader(sessionId);
     }
 };
 

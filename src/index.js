@@ -44,8 +44,7 @@ wsServer.on('request', function (request) {
                     break;
                 case 'startGame':
                     var sessionId = parsedMessage.sessionId;
-                    gameManager.startGame(sessionId);
-                    gameManager.assignMissionLeader(sessionId);
+                    gameManager.startGame(sessionId);                    
                     break;
                 case 'missionSelection':
                     gameManager.submitMissionSelection(parsedMessage);
