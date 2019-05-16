@@ -97,6 +97,7 @@ if ('WebSocket' in window) {
 }
 
 var gameModel = function () {
+    this.sessionId = ko.observable('');
     this.playerSession = '';
     this.playersLoading = ko.observable(true);
     this.isServer = ko.observable(false);
@@ -105,7 +106,6 @@ var gameModel = function () {
     this.isApprovingMission = ko.observable(false);
     this.missionVotesRecieved = ko.observable(false);
     this.isRunningMission = ko.observable(false);
-    this.sessionId = ko.observable('');
     this.playerName = ko.observable('');
     this.playerRole = ko.observable('');
     this.playerList = ko.observableArray();
@@ -113,11 +113,11 @@ var gameModel = function () {
     this.selectedPlayerList = ko.observableArray([]);
     this.missionVoteResults = ko.observableArray([]);
     this.votingResult = ko.observable();
+    this.screen = ko.observable(0);
+    this.gameStarted = ko.observable(false);
     this.gameScore = ko.observableArray([]);
     this.totalBlueVotes = ko.observable(0);
     this.totalRedVotes = ko.observable(0);
-    this.screen = ko.observable(0);
-    this.gameStarted = ko.observable(false);
 
     this.increment = function() {
         this.screen(this.screen() + 1);
