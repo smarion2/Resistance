@@ -53,7 +53,10 @@
                     </ul>
                     <h4 style='color: white' >The vote result is:</h4>
                     <span style='color: white' id='voting-result' class='font-weight-bold' data-bind='text: $data.votingResult'></span>
-                </div>                    
+                </div>
+                <div class='text-center mt-5' data-bind='visible: $data.missionLeader() !== ""'>
+                    <span data-bind='text: $data.missionLeader'></span> you are the mission leader. Choose wisely!
+                </div>
             </div>
             
             <!-- ***************Player*************** -->

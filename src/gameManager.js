@@ -224,6 +224,7 @@ function assignMissionLeader(sessionId) {
         var player = session.players[session.leaderToken];
         player.isMissionLeader = true;
         player.connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }));
+        session.serverConnection.sendUTF(JSON.stringify({messageType: 'selectMission', missionLeader: player.name }));
         session.leaderToken++;
     }
 }

@@ -40,6 +40,7 @@ if ('WebSocket' in window) {
                 break;
             case 'selectMission':
                 viewModel.isSelectingMission(true);
+                viewModel.missionLeader(parsedMessage.missionLeader);
                 viewModel.numberGoingOnMission(Number(parsedMessage.numberToPick));
                 break;
             case 'approveMission':
@@ -48,6 +49,7 @@ if ('WebSocket' in window) {
                 break;
             case 'missionVoteResults':
                 viewModel.missionVotesRecieved(true);
+                viewModel.missionLeader('');
                 viewModel.missionVoteResults(parsedMessage.results);
                 viewModel.votingResult(parsedMessage.result);
                 console.log('votes recieved: ' + viewModel.missionVotesRecieved());
@@ -108,6 +110,7 @@ var gameModel = function () {
     this.playerName = ko.observable('');
     this.playerRole = ko.observable('');
     this.playerList = ko.observableArray();
+    this.missionLeader = ko.observable('');
     this.otherSpies = ko.observableArray();
     this.selectedPlayerList = ko.observableArray([]);
     this.missionVoteResults = ko.observableArray([]);
