@@ -30,6 +30,9 @@ wsServer.on('request', function (request) {
     console.log(new Date() + ' Connection accepted.');
     connection.on('message', function (message) {
         var parsedMessage = JSON.parse(message.utf8Data);
+        if (parsedMessage.sessionId) {
+            parsedMessage.sessionId = parsedMessage.sessionId.toUpperCase();;
+        }
         console.log(new Date() + ' Mesesage recieved: ' + JSON.stringify(parsedMessage));
         if (message.type === 'utf8') {            
             switch (parsedMessage.messageType) {
