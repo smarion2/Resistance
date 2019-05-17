@@ -39,29 +39,25 @@ exports.reconnectToGame = function (message, connection) {
         for (var player in session.players) {
             if (session.players[player].playerSession === message.playerSession) {
                 session.players[player].connection = connection;
-                sendPlayerListAndRoleToPlayer(message.sessionId, player);
+                if (session.gameState !== 'preGame') {
+                    sendPlayerListAndRoleToPlayer(message.sessionId, player);
+                }
                 switch (session.gameState) {
-                    case 'preGame':
-                        connection.sendUTF(JSON.stringify({ messageType: 'setScreen', screen: 1 }))
-                        break;
                     case 'missionLeaderAssigned':
                         if (session.players[player].isMissionLeader) {
                             var numberOfMissionMembers = getMissionMembers(session.players.length, session.roundNumber);                            
                             connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }))
                         }
-                        connection.sendUTF(JSON.stringify({ messageType: 'setScreen', screen: 2 }))
                         break;
                     case 'missionSubmitted':
                         if (typeof(session.players[player].approvedMission) === 'undefined' || session.players[player].approvedMission === null) {
                             connection.sendUTF(JSON.stringify({ messageType: 'approveMission', selectedPlayers: session.selectedPlayers }));
                         }
-                        connection.sendUTF(JSON.stringify({ messageType: 'setScreen', screen: 2 }))
                         break;
                     case 'missionStarted':
                         if (session.players[player].isOnMission && !session.players[player].hasSubmitMissionResults) {
                             connection.sendUTF(JSON.stringify({ messageType: 'runMission' }));
                         }
-                        connection.sendUTF(JSON.stringify({ messageType: 'setScreen', screen: 2 }))
                         break;  
                 }
                 break;

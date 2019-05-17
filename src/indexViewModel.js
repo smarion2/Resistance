@@ -17,9 +17,6 @@ if ('WebSocket' in window) {
             case 'error':
                 window.alert(parsedMessage.error);
                 break;
-            case 'setScreen':
-                viewModel.screen(parsedMessage.screen);
-                break;
             case 'joinedGame':
                 viewModel.playerSession = parsedMessage.playerSession;
                 var user = {
@@ -84,12 +81,12 @@ if ('WebSocket' in window) {
                 viewModel.playersLoading(false);
                 viewModel.playerName(user.name);
                 viewModel.sessionId(user.sessionId);                
-                viewModel.gameStarted(true);
+                viewModel.screen(2);
                 console.log(JSON.stringify(user));
                 ws.send(JSON.stringify({ messageType: 'reconnect', userInfo: user }));
             }            
         }
-    }, 1000);
+    }, 100);
 
     ws.onclose = function () {
         // reconnect here if server dies
