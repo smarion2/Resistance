@@ -16,12 +16,15 @@ if ('WebSocket' in window) {
         switch (parsedMessage.messageType) {
             case 'error':
                 window.alert(parsedMessage.error);
+                break;
+            case 'setScreen':
+                viewModel.screen(parsedMessage.screen);
+                break;
             case 'joinedGame':
                 viewModel.playerSession = parsedMessage.playerSession;
                 var user = {
                     sessionId: viewModel.sessionId(),
-                    name: viewModel.playerName(),
-                    role: viewModel.playerRole(),
+                    name: viewModel.playerName(),                    
                     playerSession: parsedMessage.playerSession
                 };
                 localStorage.user = JSON.stringify(user);
@@ -80,8 +83,7 @@ if ('WebSocket' in window) {
             if (user) {
                 viewModel.playersLoading(false);
                 viewModel.playerName(user.name);
-                viewModel.sessionId(user.sessionId);        
-                viewModel.screen(2);
+                viewModel.sessionId(user.sessionId);                
                 viewModel.gameStarted(true);
                 console.log(JSON.stringify(user));
                 ws.send(JSON.stringify({ messageType: 'reconnect', userInfo: user }));
