@@ -10,9 +10,6 @@ if ('WebSocket' in window) {
     ws.onmessage = function (message) {
         console.log(JSON.stringify(message.data));
         var parsedMessage = JSON.parse(message.data);
-        for (var i in parsedMessage) {
-            console.log(i);
-        }
         switch (parsedMessage.messageType) {
             case 'error':
                 window.alert(parsedMessage.error);
