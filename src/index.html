@@ -143,24 +143,6 @@
         <script type='text/javascript' src='./knockout-3.4.2.js'></script>
         <script type='text/javascript' src='./indexViewModel.js'></script>
         <script>
-            $('#voting li').each(function (index) {
-                var item,
-                    currentIndex;
-                item = $(this);
-                currentIndex = index * 600;
-                setTimeout(function () {
-                    item.removeClass('display-hidden');
-                    item.addClass('fadeDown');
-                    if (index === gameModel.missionVoteResults().length) {
-                        $('#voting-result').addClass('fadeDown');
-                    }
-                }, currentIndex);
-            });
-            //$('select').selectpicker();
-            $(document).ready(function () {
-                $('[data-toggle="popover"]').popover();
-            });
-
             $('#flip').bind({
                 click: function () {
                     $('#flip .card').toggleClass('flipped');
