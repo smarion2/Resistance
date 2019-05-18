@@ -12,7 +12,8 @@ exports.joinGame = function (message, connection) {
         if (session.players.length < 10) {
             var playerSession = generateId(10);
             session.players.push({ name: message.name, connection: connection, playerSession: playerSession });
-            connection.sendUTF(JSON.stringify({messageType: 'joinedGame', playerSession: playerSession }));
+            session.serverConnection.sendUTF(JSON.stringify({messageType: 'joinedGameServer', name: message.name }));
+            connection.sendUTF(JSON.stringify({messageType: 'joinedGamePlayer', playerSession: playerSession }));
             console.log('Player joined session:' + message.sessionId + ' Total player count: ' + session.players.length);            
         } else {
             console.log('Player unable to join session. Session full');            
@@ -30,6 +31,7 @@ exports.startGame = function (sessionId) {
             sendPlayerListAndRoleToPlayer(sessionId, player);
         }    
         assignMissionLeader(sessionId);
+        session.serverConnection.sendUTF(JSON.stringify({ messageType: 'startGameServer' }));
     }
 };
 
@@ -199,7 +201,7 @@ function sendPlayerListAndRoleToPlayer(sessionId, playerIndex) {
         console.log('otherSpies: ' + JSON.stringify(otherSpies));        
         console.log('Roles have been assigned, time to start the game');
         var message = { 
-            messageType: 'startGame',
+            messageType: 'startGamePlayer',
             role: session.players[playerIndex].role,
             players: players                
         };
@@ -208,7 +210,7 @@ function sendPlayerListAndRoleToPlayer(sessionId, playerIndex) {
         }
 
         console.log('MESSAGE: ' + JSON.stringify(message));
-        session.players[playerIndex].connection.sendUTF(JSON.stringify(message));        
+        session.players[playerIndex].connection.sendUTF(JSON.stringify(message));
     }
 }
 

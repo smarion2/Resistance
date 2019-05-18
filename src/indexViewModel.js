@@ -17,7 +17,14 @@ if ('WebSocket' in window) {
             case 'error':
                 window.alert(parsedMessage.error);
                 break;
-            case 'joinedGame':
+            case 'createGame':
+                console.log(parsedMessage.sessionId);
+                viewModel.sessionId(parsedMessage.sessionId);
+                break;
+            case 'joinedGameServer':
+                viewModel.playerList.push(parsedMessage.name);
+                break;
+            case 'joinedGamePlayer':
                 viewModel.playerSession = parsedMessage.playerSession;
                 var user = {
                     sessionId: viewModel.sessionId(),
@@ -26,11 +33,10 @@ if ('WebSocket' in window) {
                 };
                 localStorage.user = JSON.stringify(user);
                 break;
-            case 'createGame':
-                console.log(parsedMessage.sessionId);
-                viewModel.sessionId(parsedMessage.sessionId);
+            case 'startGameServer':
+                viewModel.increment();
                 break;
-            case 'startGame':
+            case 'startGamePlayer':
                 console.log('starting game you are ' + parsedMessage.role);
                 viewModel.gameStarted(true);
                 viewModel.playersLoading(false);
