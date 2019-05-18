@@ -21,42 +21,41 @@
             </div>
             <!-- ***************Game host*************** -->
             <div data-bind='visible: $data.isServer'>
-                <div class='text-center' data-bind='visible: $data.screen() ==1'>
+                <div class='text-center' data-bind='visible: $data.screen() == 1 && !$data.gameStarted()'>
                     Game code: <span data-bind="text: $data.sessionId"></span>
-                </div>
-                <div class='text-center' data-bind='visible: $data.screen() === 2 && !$data.gameStarted()'>
-                    <h2><span class='pb-2 badge badge-secondary' data-bind='text: $data.playerName'></span></h2>                    
                     <h5 class='mt-5 mb-3'>Players in lobby</h5>
                     <div class='mb-5 no-list-display' data-bind='foreach: $data.playerList'>
                         <li data-bind='text: $data'></li>
                     </div>
+                </div>
+                <div class='text-center' data-bind='visible: $data.screen() === 2 '>
+                    <div class='gameBoard'>
+                        <span style='color: white'>Pass votes: </span><span style='color: white' data-bind='text: $data.totalBlueVotes'></span>
+                        <span style='color: white'>Fail votes: </span><span style='color: white' data-bind='text: $data.totalRedVotes'></span>
+                        <ul class='winTracker' data-bind='foreach: $data.gameScore'>
+                            <!-- ko if: $data -->
+                            <li class='winToken'><img src="../images/winToken.png"></li>
+                            <!-- /ko -->
+                            <!-- ko if: $data === false -->
+                            <li class='winToken'><img src="../images/loseToken.png"></li>
+                            <!-- /ko -->
+                        </ul>
+                    </div>
+                    <div class='text-center mt-5' data-bind='visible: $data.missionVotesRecieved'>
+                        <h3 style='color: white' >Here's how the voting went:</h3>
+                        <ul id='voting' style='color: white' data-bind='foreach: $data.missionVoteResults'>
+                            <li>
+                                <span data-bind='text: $data.name'></span><span>:</span>
+                                <b data-bind='text: $data.result'></b>
+                            </li>
+                        </ul>
+                        <h4 style='color: white' >The vote result is:</h4>
+                        <span style='color: white' id='voting-result' class='font-weight-bold' data-bind='text: $data.votingResult'></span>
+                    </div>
+                    <div class='text-center mt-5' data-bind='visible: $data.missionLeader() !== ""'>
+                        <span data-bind='text: $data.missionLeader'></span> you are the mission leader. Choose wisely!
+                    </div>                    
                 </div>                
-                <div class='gameBoard'>
-                    <span style='color: white'>Pass votes: </span><span style='color: white' data-bind='text: $data.totalBlueVotes'></span>
-                    <span style='color: white'>Fail votes: </span><span style='color: white' data-bind='text: $data.totalRedVotes'></span>
-                    <ul class='winTracker' data-bind='foreach: $data.gameScore'>
-                        <!-- ko if: $data -->
-                        <li class='winToken'><img src="../images/winToken.png"></li>
-                        <!-- /ko -->
-                        <!-- ko if: $data === false -->
-                        <li class='winToken'><img src="../images/loseToken.png"></li>
-                        <!-- /ko -->
-                    </ul>
-                </div>
-                <div class='text-center mt-5' data-bind='visible: $data.missionVotesRecieved'>
-                    <h3 style='color: white' >Here's how the voting went:</h3>
-                    <ul id='voting' style='color: white' data-bind='foreach: $data.missionVoteResults'>
-                        <li>
-                            <span data-bind='text: $data.name'></span><span>:</span>
-                            <b data-bind='text: $data.result'></b>
-                        </li>
-                    </ul>
-                    <h4 style='color: white' >The vote result is:</h4>
-                    <span style='color: white' id='voting-result' class='font-weight-bold' data-bind='text: $data.votingResult'></span>
-                </div>
-                <div class='text-center mt-5' data-bind='visible: $data.missionLeader() !== ""'>
-                    <span data-bind='text: $data.missionLeader'></span> you are the mission leader. Choose wisely!
-                </div>
             </div>
             
             <!-- ***************Player*************** -->
