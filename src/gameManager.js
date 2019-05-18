@@ -16,10 +16,9 @@ exports.joinGame = function (message, connection) {
             connection.sendUTF(JSON.stringify({messageType: 'joinedGamePlayer', playerSession: playerSession }));
             console.log('Player joined session:' + message.sessionId + ' Total player count: ' + session.players.length);            
         } else {
-            console.log('Player unable to join session. Session full');            
             connection.sendUTF(JSON.stringify({messageType: 'error', error: 'Cannot join session. Session is full' }));
+            console.log('Player unable to join session. Session full');            
         }
-        // broadcast players to everyone?
     }
 };
 
