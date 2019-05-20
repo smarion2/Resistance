@@ -219,8 +219,7 @@ function assignMissionLeader(sessionId) {
     if (session) {
         session.gameState = 'missionLeaderAssigned';
         sessionManager.resetMissionLeader(sessionId);
-        session.leaderToken = session.leaderToken % session.players.length;
-        console.log('Leader token is at position ' + session.leaderToken);
+        session.leaderToken = session.leaderToken % session.players.length;        
         var numberOfMissionMembers = getMissionMembers(session.players.length, session.roundNumber);
         var player = session.players[session.leaderToken];
         player.isMissionLeader = true;
