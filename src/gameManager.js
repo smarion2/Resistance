@@ -121,14 +121,21 @@ exports.registerVote = function (message) {
             }
             var result;
             if (totalSuccess <= (session.players.length / 2)) {
-                // TO DO keep track faile vote rounds blue auto fails at 5 in a row.
                 console.log('Mission did not recieve enough votes. Assigning new leader');
                 result = 'Failed';
                 sessionManager.resetWhoGoesOnMission(message.sessionId);
+                session.leaderVoteFailCount += 1;
+                if (session.leaderVoteFailCount === 5) {
+                    console.log('Too many failed votes, spies win!');
+                    for (var player in session.players) {
+                        session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'gameOver' }));
+                    }
+                }
                 assignMissionLeader(message.sessionId);
             } else {
                 console.log('Mission passed');
                 result = 'Passed';
+                session.leaderVoteFailCount = 0;
                 for (var player in session.players) {
                     if (session.players[player].isOnMission) {
                         console.log(session.players[player].name + ' is being sent on the mission');
