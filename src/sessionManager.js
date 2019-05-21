@@ -4,6 +4,10 @@ exports.getSessionBySessionId = function (sessionId) {
     return sessions[sessionId];
 }
 
+exports.deleteSessionBySessionId = function(sessionId) {
+    delete sessions.sessionId;
+}
+
 exports.createNewSession = function (connection) {
     var sessionId = createSession(connection);
     return sessionId;

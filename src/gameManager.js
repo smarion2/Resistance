@@ -130,6 +130,7 @@ exports.registerVote = function (message) {
                     for (var player in session.players) {
                         session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'gameOver' }));
                     }
+                    sessionManager.deleteSessionBySessionId(message.sessionId);
                 }
                 assignMissionLeader(message.sessionId);
             } else {
@@ -180,6 +181,7 @@ exports.registerResult = function (message) {
             session.serverConnection.sendUTF(JSON.stringify({ messageType: 'missionResults', blueWins: blueWins, blueCount: session.missionPasses, redCount: session.missionFails }));
             if (session.blueWins === 3 || session.redWins === 3) {
                 session.serverConnection.sendUTF(JSON.stringify({ messageType: 'winner', blueWins: (session.blueWins === 3) }));
+                sessionManager.deleteSessionBySessionId(message.sessionId);
             } else {
                 sessionManager.resetWhoGoesOnMission(message.sessionId);
                 sessionManager.resetMissionSelectionVotes(message.sessionId);
