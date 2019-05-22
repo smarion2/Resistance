@@ -144,7 +144,7 @@ exports.registerVote = function (message) {
                     }
                 }
             }
-            session.serverConnection.sendUTF(JSON.stringify({ messageType: 'missionVoteResults', results: results, result: result }));
+            session.serverConnection.sendUTF(JSON.stringify({ messageType: 'missionVoteResults', results: results, result: result, leaderVoteFailCount: session.leaderVoteFailCount }));
         }
     }
 }

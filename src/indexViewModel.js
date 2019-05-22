@@ -55,6 +55,7 @@ if ('WebSocket' in window) {
                 viewModel.missionLeader('');
                 viewModel.missionVoteResults(parsedMessage.results);
                 viewModel.votingResult(parsedMessage.result);
+                viewModel.leaderVoteFailCount(parsedMessage.leaderVoteFailCount);
                 console.log('votes recieved: ' + viewModel.missionVotesRecieved());
                 break;
             case 'runMission':
@@ -114,6 +115,7 @@ var gameModel = function () {
     this.playerRole = ko.observable('');
     this.playerList = ko.observableArray();
     this.missionLeader = ko.observable('');
+    this.leaderVoteFailCount = ko.observable();
     this.otherSpies = ko.observableArray();
     this.selectedPlayerList = ko.observableArray([]);
     this.missionVoteResults = ko.observableArray([]);
@@ -224,4 +226,5 @@ function gameOver () {
     viewModel.isApprovingMission(false);
     viewModel.missionVotesRecieved(false);
     viewModel.isRunningMission(false);
+    viewModel.leaderVoteFailCount(0);
 }

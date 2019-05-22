@@ -49,6 +49,7 @@
                             </div>
                             <div class='col-md'>
                                 <div class='gameBoard'>
+                                    <span style='color: white'>Fail vote tracker:</span><span style='color: white' data-bind='text: $data.leaderVoteFailCount'></span>
                                     <span style='color: white'>Pass votes: </span><span style='color: white' data-bind='text: $data.totalBlueVotes'></span>
                                     <span style='color: white'>Fail votes: </span><span style='color: white' data-bind='text: $data.totalRedVotes'></span>
                                     <ul class='winTracker' data-bind='foreach: $data.gameScore'>
