@@ -102,6 +102,11 @@ input {
     overflow: hidden;
 }
 
+.blue-print {
+    background-image: url('../../images/bluePrint.png');
+    background-position: center;
+}
+
 .approve-back {
     background-image: url('../../images/back-card.jpg');
     background-repeat: no-repeat;
@@ -130,11 +135,26 @@ input {
     padding: 0;
 }
 
-/* Game Board */
-.gameBoard {
-    display: table; 
-	margin: 0 auto;
+/* Game Info */
+.mission-leader {
+    font-size: 35px;
+    border: 6px solid;
+    height: 150px;
 }
+
+/* Game Board */
+.gameBoard { 
+    float: left;
+    display: block;
+    text-align: center;
+}
+
+.fail-tracker {
+    float: left;
+    padding-top: 150px;
+    text-align: center;
+}
+
 .winTracker {
     list-style-type: none;
     margin: 0;
@@ -142,11 +162,7 @@ input {
     overflow: hidden;    
 }
 
-.circles {
-    display: flex;
- }
-
-.circle-with-text {
+.round-marker {
     background: rgba(0, 0, 0, .5);
     justify-content: center;
     align-items: center;
@@ -154,7 +170,7 @@ input {
     border: 6px solid;
     text-align: center;
     margin: 5px 20px;
-    font-size: 15px;
+    font-size: 75px;
     padding: 15px;
     display: flex;
     height: 150px;
@@ -162,6 +178,19 @@ input {
     color: #fff;
 }
 
-.multi-line-text {
-    font-size: 20px;
+.fail-track-marker {
+    background: rgba(0, 0, 0, .5);
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    border: 3px solid;
+    text-align: center;
+    margin: 5px 20px;
+    font-size: 15px;
+    padding: 15px;
+    display: flex;
+    height: 75px;
+    width: 75px;
+    color: #fff;
 }
+
