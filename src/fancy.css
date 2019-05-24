@@ -142,6 +142,26 @@ input {
     overflow: hidden;    
 }
 
-.winToken {
-    float: left
+.circles {
+    display: flex;
+ }
+
+.circle-with-text {
+    background: rgba(0, 0, 0, .5);
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    border: 6px solid;
+    text-align: center;
+    margin: 5px 20px;
+    font-size: 15px;
+    padding: 15px;
+    display: flex;
+    height: 150px;
+    width: 150px;
+    color: #fff;
+}
+
+.multi-line-text {
+    font-size: 20px;
 }
