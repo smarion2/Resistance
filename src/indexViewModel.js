@@ -32,6 +32,7 @@ if ('WebSocket' in window) {
                 break;
             case 'startGameServer':
                 viewModel.increment();
+                fillGameBoard(parsedMessage.playersPerRound);
                 break;
             case 'startGamePlayer':
                 console.log('starting game you are ' + parsedMessage.role);
@@ -227,4 +228,10 @@ function gameOver () {
     viewModel.missionVotesRecieved(false);
     viewModel.isRunningMission(false);
     viewModel.leaderVoteFailCount(0);
+}
+
+function fillGameBoard(playersPerRound) {
+    for (var i = 0; i < playersPerRound.length; i++) {
+        document.getElementById("round-" + i).innerHTML = playersPerRound[i];
+    }
 }

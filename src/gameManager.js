@@ -30,7 +30,7 @@ exports.startGame = function (sessionId) {
             sendPlayerListAndRoleToPlayer(sessionId, player);
         }    
         assignMissionLeader(sessionId);
-        session.serverConnection.sendUTF(JSON.stringify({ messageType: 'startGameServer' }));
+        session.serverConnection.sendUTF(JSON.stringify({ messageType: 'startGameServer', playersPerRound: getMissionMembers(session.players.length) }));
     }
 };
 
@@ -280,7 +280,11 @@ function getMissionMembers(playerCount, round) {
         9: [3, 4, 4, 5, 5],
         10: [3, 4, 4, 5, 5]
     };
-    return members[playerCount][round];
+    if (round > 0) {
+        return members[playerCount][round];
+    } else {
+        return members[playerCount];
+    }
 }
 
 function getPlayerNames(players) {
