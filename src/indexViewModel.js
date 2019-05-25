@@ -63,10 +63,10 @@ if ('WebSocket' in window) {
                 viewModel.isRunningMission(true);
                 break;
             case 'missionResults':
-                viewModel.missionVotesRecieved(false);
-                viewModel.gameScore.push(parsedMessage.blueWins);
+                viewModel.missionVotesRecieved(false);                
                 viewModel.totalBlueVotes(parsedMessage.blueCount);
                 viewModel.totalRedVotes(parsedMessage.redCount);
+                recordWinner(parsedMessage.blueWins);
                 console.log('does blue win? ' + parsedMessage.blueWins);
                 console.log('total pass cards ' + parsedMessage.blueCount);
                 console.log('total fail cards ' + parsedMessage.redCount);
@@ -105,6 +105,7 @@ if ('WebSocket' in window) {
 var gameModel = function () {
     this.sessionId = ko.observable('');
     this.playerSession = '';
+    this.roundNumber = 0;
     this.playersLoading = ko.observable(true);
     this.isServer = ko.observable(false);
     this.isSelectingMission = ko.observable(false);
@@ -234,4 +235,13 @@ function fillGameBoard(playersPerRound) {
     for (var i = 0; i < playersPerRound.length; i++) {
         document.getElementById("round-" + i).innerHTML = playersPerRound[i];
     }
+}
+
+function recordWinner(blueWon) {
+    if (blueWon) {
+        document.getElementById('round-' + viewModel.roundNumber).style.background = "#0258e2";
+    } else {
+        document.getElementById('round-' + viewModel.roundNumber).style.background = '#c11f1f';
+    }
+    viewModel.roundNumber++;
 }
