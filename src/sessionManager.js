@@ -80,7 +80,7 @@ function createSession(server) {
         redWins: 0,
         leaderVoteFailCount: 0,
         missionVotes: 0,
-        missionResults: 0,
+        missionResults: [],
         missionPasses: 0,
         missionFails: 0
     };

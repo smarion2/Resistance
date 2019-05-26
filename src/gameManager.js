@@ -157,10 +157,10 @@ exports.registerResult = function (message) {
                 session.players[player].hasSubmitMissionResults = true;
             }
         }
-        session.missionResults++;
+        session.missionResults.push(message.passedMission);
         message.passedMission ? session.missionPasses++ : session.missionFails++;
         console.log('Total mission results: ' + session.missionResults);
-        if (session.missionResults === getMissionMembers(session.players.length, session.roundNumber)) {
+        if (session.missionResults.length === getMissionMembers(session.players.length, session.roundNumber)) {
             session.roundNumber++;
             var blueWins = false;
             if (session.players.length >= 9) {
@@ -178,7 +178,7 @@ exports.registerResult = function (message) {
                     session.redWins += 1;
                 }
             }
-            session.serverConnection.sendUTF(JSON.stringify({ messageType: 'missionResults', blueWins: blueWins, blueCount: session.missionPasses, redCount: session.missionFails }));
+            session.serverConnection.sendUTF(JSON.stringify({ messageType: 'missionResults', blueWins: blueWins, missionResults: session.missionResults }));
             if (session.blueWins === 3 || session.redWins === 3) {
                 session.serverConnection.sendUTF(JSON.stringify({ messageType: 'winner', blueWins: (session.blueWins === 3) }));
                 sessionManager.deleteSessionBySessionId(message.sessionId);
@@ -189,7 +189,7 @@ exports.registerResult = function (message) {
                 sessionManager.resetSelectedPlayers(message.sessionId);
                 assignMissionLeader(message.sessionId);
             }
-            session.missionResults = 0;
+            session.missionResults = [];
             session.missionPasses = 0;
             session.missionFails = 0;
         }

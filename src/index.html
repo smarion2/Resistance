@@ -48,11 +48,12 @@
                                     <h4 style='color: white' >The vote result is:</h4>
                                     <span style='color: white' id='voting-result' class='font-weight-bold' data-bind='text: $data.votingResult'></span>
                                 </div>
+                                <div class='text-center' data-bind='visible: $data.missionVotesRecieved !== true'>
+                                    <img data-bind='revealMissionResults: missionResults' src=''/>
+                                </div>
                             </div>
                             <div class='col-4'>
-                                <div>                                    
-                                    <span style='color: white'>Pass votes: </span><span style='color: white' data-bind='text: $data.totalBlueVotes'></span>
-                                    <span style='color: white'>Fail votes: </span><span style='color: white' data-bind='text: $data.totalRedVotes'></span>
+                                <div>
                                     <div class='gameBoard'>
                                         <ul>
                                             <li id='round-0' class='round-marker'></li>
@@ -148,14 +149,14 @@
                     <h4>You have been selected for this mission!</h4>
                     <h6 class='mt-5 mb-4 font-weight-light text-center'>You must either pass or fail the mission.</h6>
                     <div>
-                        <img data-bind='click: failMission' src='../../images/fail-card.jpg'>
-                        <img data-bind='click: passMission' src='../../images/succeed-card.jpg'>
+                        <img data-bind='click: failMission' src='../../images/fail.png'>
+                        <img data-bind='click: passMission' src='../../images/success.png'>
                     </div>
                 </div>
             </div>
         </div>
 
-        <script src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous'></script>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
         <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js' integrity='sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM' crossorigin='anonymous'></script>
         <script src='https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js'></script>

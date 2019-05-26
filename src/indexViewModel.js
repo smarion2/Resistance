@@ -63,9 +63,8 @@ if ('WebSocket' in window) {
                 viewModel.isRunningMission(true);
                 break;
             case 'missionResults':
-                viewModel.missionVotesRecieved(false);                
-                viewModel.totalBlueVotes(parsedMessage.blueCount);
-                viewModel.totalRedVotes(parsedMessage.redCount);
+                viewModel.missionVotesRecieved(false);
+                viewModel.missionResults(parsedMessage.missionResults);
                 recordWinner(parsedMessage.blueWins);
                 console.log('does blue win? ' + parsedMessage.blueWins);
                 console.log('total pass cards ' + parsedMessage.blueCount);
@@ -102,6 +101,24 @@ if ('WebSocket' in window) {
     alert('Websockets are not supported in this browser please use something not terrible');
 }
 
+ko.bindingHandlers.revealMissionResults = {
+    update: function(element, valueAccessor) {
+        debugger;
+        var value = valueAccessor();
+        var unwrappedValue = ko.unwrap(value);
+        for (var card in unwrappedValue) {
+            if (card) {
+                $(element).attr('src', '../../images/success.png').hide();
+            } else {
+                $(element).attr('src', '../../images/fail.png').hide();
+            }
+
+            $(element).fadeIn(1500);
+            window.setTimeout(function() { $(element).fadeOut(1500); }, 1500);
+        }
+    }
+};
+
 var gameModel = function () {
     this.sessionId = ko.observable('');
     this.playerSession = '';
@@ -125,8 +142,7 @@ var gameModel = function () {
     this.screen = ko.observable(0);
     this.gameStarted = ko.observable(false);
     this.gameScore = ko.observableArray([]);
-    this.totalBlueVotes = ko.observable(0);
-    this.totalRedVotes = ko.observable(0);
+    this.missionResults = ko.observableArray([]);
 
     this.increment = function() {
         this.screen(this.screen() + 1);
