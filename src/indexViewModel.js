@@ -63,9 +63,9 @@ if ('WebSocket' in window) {
                 viewModel.isRunningMission(true);
                 break;
             case 'missionResults':
-                viewModel.missionVotesRecieved(false);
-                viewModel.missionResults(parsedMessage.missionResults);
-                recordWinner(parsedMessage.blueWins);
+                viewModel.missionVotesRecieved(false);                
+                //displayMissionResults(parsedMessage.missionResults);
+                recordWinner(parsedMessage.blueWins, parsedMessage.missionResults);
                 console.log('does blue win? ' + parsedMessage.blueWins);
                 console.log('total pass cards ' + parsedMessage.blueCount);
                 console.log('total fail cards ' + parsedMessage.redCount);
@@ -100,24 +100,6 @@ if ('WebSocket' in window) {
 } else {
     alert('Websockets are not supported in this browser please use something not terrible');
 }
-
-ko.bindingHandlers.revealMissionResults = {
-    update: function(element, valueAccessor) {
-        debugger;
-        var value = valueAccessor();
-        var unwrappedValue = ko.unwrap(value);
-        for (var card in unwrappedValue) {
-            if (card) {
-                $(element).attr('src', '../../images/success.png').hide();
-            } else {
-                $(element).attr('src', '../../images/fail.png').hide();
-            }
-
-            $(element).fadeIn(1500);
-            window.setTimeout(function() { $(element).fadeOut(1500); }, 1500);
-        }
-    }
-};
 
 var gameModel = function () {
     this.sessionId = ko.observable('');
@@ -253,11 +235,40 @@ function fillGameBoard(playersPerRound) {
     }
 }
 
-function recordWinner(blueWon) {
-    if (blueWon) {
-        document.getElementById('round-' + viewModel.roundNumber).style.background = "#0258e2";
-    } else {
-        document.getElementById('round-' + viewModel.roundNumber).style.background = '#c11f1f';
-    }
-    viewModel.roundNumber++;
+function recordWinner(blueWon, results) {
+    displayMissionResults(results, function() {
+        console.log('done waiting now marking round');
+        if (blueWon) {
+            document.getElementById('round-' + viewModel.roundNumber).style.background = "#0258e2";
+        } else {
+            document.getElementById('round-' + viewModel.roundNumber).style.background = '#c11f1f';
+        }
+        viewModel.roundNumber++;
+    });
+}
+
+function displayMissionResults(results, _callback) {
+    var element = $('#missionResultCard');
+    var itr = results.length;
+    var index = 0;
+    (function myLoop (i) {
+        setTimeout(function () {
+            if (results[index]) {
+               element.attr('src', '../../images/success.png').hide();
+            } else {
+                element.attr('src', '../../images/fail.png').hide();
+            }
+            index++;
+            element.fadeIn(1500, function() {
+                element.fadeOut(1500, function() {
+                    console.log('done fading');
+                });
+            });
+            if (--i) {
+                myLoop(i);
+            } else {
+                setTimeout(_callback(), 4500);                
+            }
+        }, 3500)
+    })(itr);
 }

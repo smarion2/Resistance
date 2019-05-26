@@ -143,6 +143,10 @@ input {
 }
 
 /* Game Board */
+.missionResultCard {
+    padding-top: 150px;
+}
+
 .gameBoard { 
     float: left;
     display: block;
