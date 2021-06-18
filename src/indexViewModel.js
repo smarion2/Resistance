@@ -1,15 +1,15 @@
-var viewModel;
-var ws;
+let viewModel;
+let ws;
 
 if ('WebSocket' in window) {
     if (ws == null) {
-        var ip = window.location.hostname;
-        ws = new WebSocket('ws:' + ip + ':1337', 'echo-protocol');
+        let ip = window.location.hostname;
+        ws = new WebSocket('ws:' + ip + ':1338', 'echo-protocol');
     }
 
     ws.onmessage = function (message) {
         console.log(JSON.stringify(message.data));
-        var parsedMessage = JSON.parse(message.data);
+        let parsedMessage = JSON.parse(message.data);
         switch (parsedMessage.messageType) {
             case 'error':
                 window.alert(parsedMessage.error);
@@ -23,9 +23,9 @@ if ('WebSocket' in window) {
                 break;
             case 'joinedGamePlayer':
                 viewModel.playerSession = parsedMessage.playerSession;
-                var user = {
+                let user = {
                     sessionId: viewModel.sessionId(),
-                    name: viewModel.playerName(),                    
+                    name: viewModel.playerName(),
                     playerSession: parsedMessage.playerSession
                 };
                 localStorage.user = JSON.stringify(user);
@@ -63,7 +63,7 @@ if ('WebSocket' in window) {
                 viewModel.isRunningMission(true);
                 break;
             case 'missionResults':
-                viewModel.missionVotesRecieved(false);                
+                viewModel.missionVotesRecieved(false);
                 //displayMissionResults(parsedMessage.missionResults);
                 recordWinner(parsedMessage.blueWins, parsedMessage.missionResults);
                 console.log('does blue win? ' + parsedMessage.blueWins);
@@ -71,26 +71,26 @@ if ('WebSocket' in window) {
                 console.log('total fail cards ' + parsedMessage.redCount);
                 break;
             case 'winner':
-                console.log('we have a winner was blue successful? ' + parsedMessage.blueWins);                
+                console.log('we have a winner was blue successful? ' + parsedMessage.blueWins);
                 break;
             case 'gameOver':
                 gameOver();
                 break;
         }
     }
-    
+
     window.setTimeout(function () {
-        var storage = localStorage.user
+        let storage = localStorage.user
         if (storage) {
-            var user = JSON.parse(localStorage.user);
+            let user = JSON.parse(localStorage.user);
             if (user) {
                 viewModel.playersLoading(false);
                 viewModel.playerName(user.name);
-                viewModel.sessionId(user.sessionId);                
+                viewModel.sessionId(user.sessionId);
                 viewModel.screen(2);
                 console.log(JSON.stringify(user));
                 ws.send(JSON.stringify({ messageType: 'reconnect', userInfo: user }));
-            }            
+            }
         }
     }, 100);
 
@@ -101,7 +101,7 @@ if ('WebSocket' in window) {
     alert('Websockets are not supported in this browser please use something not terrible');
 }
 
-var gameModel = function () {
+let gameModel = function () {
     this.sessionId = ko.observable('');
     this.playerSession = '';
     this.roundNumber = 0;
@@ -135,7 +135,7 @@ var gameModel = function () {
     }, this);
 
     this.roleCard = ko.pureComputed(function () {
-        var faceCss = 'face back';
+        let faceCss = 'face back';
         return this.playerRole() === 'blue' ? faceCss + ' resistance' : faceCss + ' spy';
     }, this);
 
@@ -230,7 +230,7 @@ function gameOver () {
 }
 
 function fillGameBoard(playersPerRound) {
-    for (var i = 0; i < playersPerRound.length; i++) {
+    for (let i = 0; i < playersPerRound.length; i++) {
         document.getElementById("round-" + i).innerHTML = playersPerRound[i];
     }
 }
@@ -248,9 +248,9 @@ function recordWinner(blueWon, results) {
 }
 
 function displayMissionResults(results, _callback) {
-    var element = $('#missionResultCard');
-    var itr = results.length;
-    var index = 0;
+    let element = $('#missionResultCard');
+    let itr = results.length;
+    let index = 0;
     (function myLoop (i) {
         setTimeout(function () {
             if (results[index]) {
@@ -267,7 +267,7 @@ function displayMissionResults(results, _callback) {
             if (--i) {
                 myLoop(i);
             } else {
-                setTimeout(_callback(), 4500);                
+                setTimeout(_callback(), 4500);
             }
         }, 3500)
     })(itr);

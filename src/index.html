@@ -34,7 +34,7 @@
                             <div class='col-8 blue-print'>
                                 <div class='text-center mission-leader'>
                                     <u>Current Mission Leader</u>
-                                    <br>                                    
+                                    <br>
                                     <span data-bind='text: $data.missionLeader'></span>
                                 </div>
                                 <div class='text-center mt-5' data-bind='visible: $data.missionVotesRecieved'>
@@ -88,7 +88,7 @@
                     <input style='color: white;' data-bind='value: $data.sessionId' class='w-90' placeholder='Enter 4-letter code' />
                     <button class='btn btn-light mt-3 w-60' data-bind='click: $data.joinGame'>Join Game</button>
                 </div>
-                <div class='text-center' data-bind='visible: $data.screen() === 2 && !$data.gameStarted()'>                
+                <div class='text-center' data-bind='visible: $data.screen() === 2 && !$data.gameStarted()'>
                     <h6 class='mb-3 font-weight-light'>Everybody ready?</h6>
                     <button class='btn btn-light w-40' data-bind='click: $data.startGame'>Start</button>
                 </div>

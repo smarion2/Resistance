@@ -1,43 +1,78 @@
-var sessionManager = require('./sessionManager.js');
+let sessionManager = require('./sessionManager.js');
 
 exports.createNewGame = function (connection) {
-    console.log('Creating new game');
-    var sessionId = sessionManager.createNewSession(connection);
-    connection.sendUTF(JSON.stringify({ messageType: 'createGame', sessionId: sessionId }));
+    console.log('Creating new game.');
+    let sessionId = sessionManager.createNewSession(connection);
+    connection.sendUTF(JSON.stringify({
+        messageType: 'createGame',
+        sessionId: sessionId
+    }));
 };
 
 exports.joinGame = function (message, connection) {
-    var session = sessionManager.getSessionBySessionId(message.sessionId);
-    if (session) {
-        if (session.players.length < 10) {
-            var playerSession = generateId(10);
-            session.players.push({ name: message.name, connection: connection, playerSession: playerSession });
-            session.serverConnection.sendUTF(JSON.stringify({messageType: 'joinedGameServer', name: message.name }));
-            connection.sendUTF(JSON.stringify({messageType: 'joinedGamePlayer', playerSession: playerSession }));
-            console.log('Player joined session:' + message.sessionId + ' Total player count: ' + session.players.length);            
-        } else {
-            connection.sendUTF(JSON.stringify({messageType: 'error', error: 'Cannot join session. Session is full' }));
-            console.log('Player unable to join session. Session full');            
-        }
+    let session = sessionManager.getSessionBySessionId(message.sessionId);
+    if (!session) {
+        connection.sendUTF(JSON.stringify({
+            messageType: 'error',
+            error: 'Cannot find session.'
+        }));
+        console.log('Unable to find session: ' + message.sessionId);
+        return;
     }
+
+    if (session.players.length < 10) {
+        connection.sendUTF(
+            JSON.stringify({
+                messageType: 'error',
+                error: 'Cannot join session. Session is full'
+            }));
+
+        console.log('Player unable to join session. Session full.');
+        return;
+    }
+
+    let playerSession = generateId(10);
+    session.players.push({
+        name: message.name,
+        connection: connection,
+        playerSession: playerSession
+    });
+
+    session.serverConnection.sendUTF(
+        JSON.stringify({
+            messageType: 'joinedGameServer',
+            name: message.name
+        }));
+
+    connection.sendUTF(
+        JSON.stringify({
+            messageType: 'joinedGamePlayer',
+            playerSession: playerSession
+        }));
+
+    console.log('Player joined session:' + message.sessionId + ' Total player count: ' + session.players.length);
 };
 
 exports.startGame = function (sessionId) {
-    var session = sessionManager.getSessionBySessionId(sessionId);
-    if (session && session.players.length >= 5 && session.players.length <= 10) {        
+    let session = sessionManager.getSessionBySessionId(sessionId);
+    if (session && session.players.length >= 5 && session.players.length <= 10) {
         assignPlayerRoles(session.players);
-        for (var player in session.players) {
+        for (let player in session.players) {
             sendPlayerListAndRoleToPlayer(sessionId, player);
-        }    
+        }
         assignMissionLeader(sessionId);
-        session.serverConnection.sendUTF(JSON.stringify({ messageType: 'startGameServer', playersPerRound: getMissionMembers(session.players.length, null) }));
+        session.serverConnection.sendUTF(
+            JSON.stringify({
+                messageType: 'startGameServer',
+                playersPerRound: getMissionMembers(session.players.length, null)
+            }));
     }
 };
 
 exports.reconnectToGame = function (message, connection) {
-    var session = sessionManager.getSessionBySessionId(message.sessionId);
+    let session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
-        for (var player in session.players) {
+        for (let player in session.players) {
             if (session.players[player].playerSession === message.playerSession) {
                 session.players[player].connection = connection;
                 if (session.gameState !== 'preGame') {
@@ -46,8 +81,12 @@ exports.reconnectToGame = function (message, connection) {
                 switch (session.gameState) {
                     case 'missionLeaderAssigned':
                         if (session.players[player].isMissionLeader) {
-                            var numberOfMissionMembers = getMissionMembers(session.players.length, session.roundNumber);                            
-                            connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }))
+                            let numberOfMissionMembers = getMissionMembers(session.players.length, session.roundNumber);
+                            connection.sendUTF(
+                                JSON.stringify({
+                                    messageType: 'selectMission',
+                                    numberToPick: numberOfMissionMembers
+                                }))
                         }
                         break;
                     case 'missionSubmitted':
@@ -59,7 +98,7 @@ exports.reconnectToGame = function (message, connection) {
                         if (session.players[player].isOnMission && !session.players[player].hasSubmitMissionResults) {
                             connection.sendUTF(JSON.stringify({ messageType: 'runMission' }));
                         }
-                        break;  
+                        break;
                 }
                 break;
             }
@@ -74,14 +113,14 @@ exports.assignMissionLeader = function (sessionId) {
 };
 
 exports.submitMissionSelection = function (message) {
-    var session = sessionManager.getSessionBySessionId(message.sessionId);
+    let session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
         console.log('Misison has been selected, sending out to players for approval');
         session.gameState = 'missionSubmitted';
         session.selectedPlayers = message.selectedPlayers;
         console.log(JSON.stringify(message.selectedPlayers));
-        for (var player in session.players) {
-            for (var i = 0; i < message.selectedPlayers.length; i++) {
+        for (let player in session.players) {
+            for (let i = 0; i < message.selectedPlayers.length; i++) {
                 if (message.selectedPlayers[i] === session.players[player].name) {
                     console.log(session.players[player].name + ' has been registered to go on a mission');
                     session.players[player].isOnMission = true;
@@ -94,22 +133,22 @@ exports.submitMissionSelection = function (message) {
 };
 
 exports.registerVote = function (message) {
-    var session = sessionManager.getSessionBySessionId(message.sessionId);
+    let session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
         session.missionVotes++;
         console.log('Vote has been submitted. Total mission votes recived so far ' + session.missionVotes);
-        for (var player in session.players) {
+        for (let player in session.players) {
             if (session.players[player].name === message.name) {
                 session.players[player].approvedMission = message.approvedMission;
                 break;
             }
         }
         if (session.missionVotes === session.players.length) {
-            var results = [];
-            var totalSuccess = 0;
+            let results = [];
+            let totalSuccess = 0;
             session.missionVotes = 0;
             session.gameState = 'missionStarted';
-            for (var player in session.players) {
+            for (let player in session.players) {
                 if (session.players[player].approvedMission) {
                     totalSuccess++;
                 }
@@ -119,7 +158,7 @@ exports.registerVote = function (message) {
                 });
                 session.players[player].approvedMission = message.approvedMission;
             }
-            var result;
+            let result;
             if (totalSuccess <= (session.players.length / 2)) {
                 console.log('Mission did not recieve enough votes. Assigning new leader');
                 result = 'Failed';
@@ -127,7 +166,7 @@ exports.registerVote = function (message) {
                 session.leaderVoteFailCount += 1;
                 if (session.leaderVoteFailCount === 5) {
                     console.log('Too many failed votes, spies win!');
-                    for (var player in session.players) {
+                    for (let player in session.players) {
                         session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'gameOver' }));
                     }
                     sessionManager.deleteSessionBySessionId(message.sessionId);
@@ -137,7 +176,7 @@ exports.registerVote = function (message) {
                 console.log('Mission passed');
                 result = 'Passed';
                 session.leaderVoteFailCount = 0;
-                for (var player in session.players) {
+                for (let player in session.players) {
                     if (session.players[player].isOnMission) {
                         console.log(session.players[player].name + ' is being sent on the mission');
                         session.players[player].connection.sendUTF(JSON.stringify({ messageType: 'runMission' }));
@@ -150,9 +189,9 @@ exports.registerVote = function (message) {
 }
 
 exports.registerResult = function (message) {
-    var session = sessionManager.getSessionBySessionId(message.sessionId);
+    let session = sessionManager.getSessionBySessionId(message.sessionId);
     if (session) {
-        for (var player in session.players) {
+        for (let player in session.players) {
             if (session.players[player].name === message.name) {
                 session.players[player].hasSubmitMissionResults = true;
             }
@@ -162,7 +201,7 @@ exports.registerResult = function (message) {
         console.log('Total mission results: ' + session.missionResults);
         if (session.missionResults.length === getMissionMembers(session.players.length, session.roundNumber)) {
             session.roundNumber++;
-            var blueWins = false;
+            let blueWins = false;
             if (session.players.length >= 9) {
                 if (session.missionFails < 2) {
                     blueWins = true;
@@ -197,21 +236,21 @@ exports.registerResult = function (message) {
 };
 
 function sendPlayerListAndRoleToPlayer(sessionId, playerIndex) {
-    var session = sessionManager.getSessionBySessionId(sessionId);
-    if (session) {        
-        var players = getPlayerNames(session.players);        
-        var otherSpies = [];
-        for (var player in session.players) {
+    let session = sessionManager.getSessionBySessionId(sessionId);
+    if (session) {
+        let players = getPlayerNames(session.players);
+        let otherSpies = [];
+        for (let player in session.players) {
             if (session.players[player].role === 'red' && player !== playerIndex) {
                 otherSpies.push(session.players[player].name);
-            } 
+            }
         }
-        console.log('otherSpies: ' + JSON.stringify(otherSpies));        
+        console.log('otherSpies: ' + JSON.stringify(otherSpies));
         console.log('Roles have been assigned, time to start the game');
-        var message = { 
+        let message = {
             messageType: 'startGamePlayer',
             role: session.players[playerIndex].role,
-            players: players                
+            players: players
         };
         if (session.players[playerIndex].role === 'red') {
             message.otherSpies = otherSpies;
@@ -224,13 +263,13 @@ function sendPlayerListAndRoleToPlayer(sessionId, playerIndex) {
 
 
 function assignMissionLeader(sessionId) {
-    var session = sessionManager.getSessionBySessionId(sessionId);
+    let session = sessionManager.getSessionBySessionId(sessionId);
     if (session) {
         session.gameState = 'missionLeaderAssigned';
         sessionManager.resetMissionLeader(sessionId);
-        session.leaderToken = session.leaderToken % session.players.length;        
-        var numberOfMissionMembers = getMissionMembers(session.players.length, session.roundNumber);
-        var player = session.players[session.leaderToken];
+        session.leaderToken = session.leaderToken % session.players.length;
+        let numberOfMissionMembers = getMissionMembers(session.players.length, session.roundNumber);
+        let player = session.players[session.leaderToken];
         player.isMissionLeader = true;
         player.connection.sendUTF(JSON.stringify({ messageType: 'selectMission', numberToPick: numberOfMissionMembers }));
         session.serverConnection.sendUTF(JSON.stringify({messageType: 'selectMission', missionLeader: player.name }));
@@ -239,7 +278,7 @@ function assignMissionLeader(sessionId) {
 }
 
 function assignPlayerRoles(players) {
-    var roleChart = {
+    let roleChart = {
         5: [3, 2],
         6: [4, 2],
         7: [4, 3],
@@ -247,19 +286,19 @@ function assignPlayerRoles(players) {
         9: [6, 3],
         10: [6, 4]
     };
-    var roles = roleChart[players.length];
+    let roles = roleChart[players.length];
     console.log('player Count ' + players.length + ' roles ' + JSON.stringify(roles));
     for (let i = players.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [players[i], players[j]] = [players[j], players[i]];
     }
-    var playerIndex = 0;
-    for (var i = 0; i < roles[0]; i++) {
+    let playerIndex = 0;
+    for (let i = 0; i < roles[0]; i++) {
         players[playerIndex].role = 'blue';
         console.log('Player ' + players[playerIndex].name + ' is blue');
         playerIndex++;
     }
-    for (var i = 0; i < roles[1]; i++) {
+    for (let i = 0; i < roles[1]; i++) {
         players[playerIndex].role = 'red';
         console.log('Player ' + players[playerIndex].name + ' is red');
         playerIndex++;
@@ -272,7 +311,7 @@ function assignPlayerRoles(players) {
 }
 
 function getMissionMembers(playerCount, round) {
-    var members = {
+    let members = {
         5: [2, 3, 2, 3, 3],
         6: [2, 3, 4, 3, 4],
         7: [2, 3, 3, 4, 4],
@@ -288,18 +327,17 @@ function getMissionMembers(playerCount, round) {
 }
 
 function getPlayerNames(players) {
-    var list = []
-    for (var player in players) {
+    let list = []
+    for (let player in players) {
         list.push(players[player].name);
     }
     return list;
-} 
-
+}
 function generateId(length) {
-    var result = '';
-    var characters  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
+    let result = '';
+    let characters  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890';
+    let charactersLength = characters.length;
+    for ( let i = 0; i < length; i++ ) {
        result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;

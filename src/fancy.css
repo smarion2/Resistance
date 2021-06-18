@@ -33,7 +33,7 @@
     background-color: grey;
 }
 
-.flip .card .back {    
+.flip .card .back {
     background-repeat: no-repeat;
     -webkit-transform: rotateY(180deg);
 }
@@ -43,7 +43,7 @@
 }
 
 .resistance {
-    background-image: url('../../images/ally-1-card.jpg');     
+    background-image: url('../../images/ally-1-card.jpg');
 }
 
 .slide {
@@ -147,7 +147,7 @@ input {
     padding-top: 150px;
 }
 
-.gameBoard { 
+.gameBoard {
     float: left;
     display: block;
     text-align: center;
@@ -163,7 +163,7 @@ input {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    overflow: hidden;    
+    overflow: hidden;
 }
 
 .round-marker {
