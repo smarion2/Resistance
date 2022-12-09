@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/smarion2/resistance#readme",
   "dependencies": {
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "websocket": "^1.0.28"
   }
 }
